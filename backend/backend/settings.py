@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     "corsheaders",  # 29.11.25 Added for handling CORS
     "django_filters",  # 29.11.25 Added for filtering support
     "drf_yasg",  # 29.11.25 Added for API documentation
+    "django_extensions", # 06.12.25 Added for additional management commands
 ]
 
 MIDDLEWARE = [

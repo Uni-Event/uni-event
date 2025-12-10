@@ -1,17 +1,43 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext"; // <--- 1. IMPORTA ASTA
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
+import ProtectedRoute from "./components/ProtectedRoute";
+
+import NotFoundPage from "./pages/NotFoundPage";
 import AuthPage from "./pages/AuthPage";
-import HomePage from "./pages/HomePage";
+import DashboardWrapper from "./pages/DashboardWrapper";
+
+function Logout() {
+  localStorage.clear();
+
+  return <Navigate to="/" />;
+}
+
+function RegisterAndLogout() {
+  localStorage.clear();
+
+  return <AuthPage />;
+}
 
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<AuthPage />} />
-          <Route path="/home" element={<HomePage />} />
-        </Routes>
-      </AuthProvider>
+      <Routes>
+
+        <Route 
+          path="/" 
+          element={
+            <ProtectedRoute>
+              <DashboardWrapper />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route path="/auth" element={<RegisterAndLogout />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="*" element={<NotFoundPage />} />
+
+      </Routes>
     </Router>
   );
 }

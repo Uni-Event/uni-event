@@ -1,12 +1,20 @@
+# Importuri externe
 from rest_framework import generics, permissions
-from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
+
+# Importuri locale
 from .models import CustomUser, OrganizerRequest
 from .serializers import (
+    MyTokenObtainPairSerializer,
     UserSerializer,
     RegisterSerializer,
     OrganizerRequestSerializer
 )
+from .services import google_validate_id_token, google_get_or_create_user
 
 # View for user registration
 class RegisterView(generics.CreateAPIView):
@@ -69,3 +77,37 @@ class OrganizerRequestUpdateAdminView(generics.UpdateAPIView):
             user.save()
 
         return Response(OrganizerRequestSerializer(instance).data)
+    
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
+class GoogleLoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        token = request.data.get('token')
+        if not token:
+            return Response({'error': 'No token provided'}, status=400)
+
+        # 1. Validam token-ul 
+        google_data = google_validate_id_token(token)
+        
+        if not google_data:
+            return Response({'error': 'Token invalid sau expirat'}, status=400)
+
+        # 2. Obtinem sau cream userul 
+        user = google_get_or_create_user(google_data)
+
+        # 3. Generam token-urile JWT 
+        refresh = RefreshToken.for_user(user)
+        
+        # Adaugam datele custom in token
+        refresh['email'] = user.email
+        refresh['is_organizer'] = user.is_organizer
+        refresh['is_staff'] = user.is_staff
+        refresh['full_name'] = f"{user.first_name} {user.last_name}"
+
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        })

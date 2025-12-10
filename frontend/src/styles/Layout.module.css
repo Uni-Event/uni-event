@@ -1,0 +1,28 @@
+.layoutContainer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f8f9fa; /* Un gri foarte deschis pentru fundalul paginii */
+}
+
+.mainWrapper {
+    display: flex;
+    flex: 1;
+    position: relative;
+    max-width: 1400px; 
+    width: 100%;
+    margin: 0 auto;
+    padding-top: 20px; /* Spatiu intre Navbar si continut */
+}
+
+.contentArea {
+    flex: 1;
+    padding: 0 30px 30px 100px; /* Padding stanga mare pt a face loc Sidebarului */
+    transition: all 0.3s;
+}
+
+@media screen and (max-width: 768px) {
+    .contentArea {
+        padding: 0 20px 90px 20px; /* Padding jos mare pt meniul de mobil */
+    }
+}

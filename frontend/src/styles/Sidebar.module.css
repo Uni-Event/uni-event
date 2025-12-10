@@ -1,0 +1,308 @@
+/* --- DESKTOP SIDEBAR --- */
+.sidebar {
+    position: fixed;
+    left: 20px;
+    top: 85px;
+    bottom: 15px;
+    width: 60px; 
+    background: linear-gradient(180deg, #9b6be0 0%, #8a56d1 100%);
+    
+    border-radius: 16px; 
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 25px 0;
+    z-index: 990;
+    
+    /* Umbra subtila */
+    box-shadow: 0 8px 32px rgba(138, 86, 209, 0.2);
+}
+
+.navGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Spatiere intre butoane */
+    width: 100%;
+    align-items: center;
+}
+
+/* Containerul butonului */
+.navItem {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centram totul */
+    color: white;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    border-radius: 12px; /* Colturi asortate cu sidebarul */
+    transition: all 0.2s ease;
+    
+    width: 42px; 
+    height: 42px;
+    
+    overflow: visible; 
+    position: relative;
+}
+
+/* Container iconita */
+.iconWrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+/* --- TOOLTIP (Textul plutitor) --- */
+.label {
+    position: absolute;
+    left: 55px; /* Pozitionat in DREAPTA iconitei */
+    top: 50%;
+    transform: translateY(-50%) translateX(-10px);
+    
+    background-color: #333; /* Fundal inchis */
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    
+    /* Ascuns implicit */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none; /* Nu incurca mouse-ul */
+    
+    transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Efect de "bouncy" mic */
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* Triunghi mic la tooltip (sageata) */
+.label::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0; 
+    height: 0; 
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent; 
+    border-right: 4px solid #333; 
+}
+
+/* --- HOVER EFFECT --- */
+
+/* La hover pe buton, apare tooltip-ul */
+.navItem:hover .label {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0); /* Aluneca la locul lui */
+}
+
+/* Hover pe buton (doar fundal) */
+.navItem:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Starea Activa (Pagina curenta) */
+.active {
+    background-color: white;
+    color: #8a56d1;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.active .label {
+    background-color: #8a56d1; /* Tooltip mov cand e activ */
+}
+.active .label::before {
+    border-right-color: #8a56d1;
+}
+
+/* Footer Group (Logout) */
+.footerGroup {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.logoutBtn:hover {
+    background-color: rgba(255, 59, 48, 0.2);
+}
+.logoutBtn:hover .label {
+    background-color: #d32f2f; /* Tooltip rosu la logout */
+}
+.logoutBtn:hover .label::before {
+    border-right-color: #d32f2f;
+}
+
+/* --- MOBILE BOTTOM BAR --- */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        top: auto;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        border-radius: 0;
+        padding: 0;
+        
+        /* Layout */
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        
+        /* Aspect Flat & Alb */
+        background: #ffffff;
+        box-shadow: 0 -1px 5px rgba(0,0,0,0.05); /* Umbra foarte fina sus */
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .navGroup {
+        flex-direction: row;
+        justify-content: space-evenly;
+        gap: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Resetare TOTALA pentru toate butoanele (navItem) */
+    .navItem {
+        width: auto !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+        flex: 1; /* Sa ocupe spatiu egal */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        
+        /* Eliminare orice stil de buton */
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        outline: none !important;
+        
+        color: #999; /* Culoare implicita gri */
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* --- FIX SPECIFIC PENTRU BUTONUL VERDE (addButton) --- */
+    /* Aici e cheia: suprascriem orice border de desktop */
+    .addButton,
+    .addButton:hover,
+    .addButton:focus,
+    .addButton.active {
+        border: 0 !important;         /* SCOATE CONTURUL */
+        border-color: transparent !important;
+        outline: none !important;
+        box-shadow: none !important;  /* Scoate umbra */
+        background: transparent !important; /* Scoate fundalul */
+        width: auto !important;
+    }
+
+    /* Doar culoarea iconitei ramane verde */
+    .addButton {
+        color: #00e676 !important;
+    }
+    
+    /* Cand apesi pe el */
+    .addButton.active {
+        color: #00c853 !important;
+    }
+
+    .iconWrapper {
+        font-size: 1.4rem;
+        margin-bottom: 2px;
+        width: auto;
+        height: auto;
+    }
+
+    /* Textul de sub iconita */
+    .label {
+        position: static;
+        transform: none;
+        background: transparent !important;
+        color: inherit !important;
+        padding: 0;
+        margin: 0;
+        width: auto;
+        opacity: 1;
+        visibility: visible;
+        font-size: 0.65rem;
+        font-weight: 500;
+        box-shadow: none;
+        display: block;
+        pointer-events: none;
+    }
+    
+    .label::before {
+        display: none !important;
+    }
+
+    .navItem:hover .label {
+        transform: none;
+    }
+
+    /* Starea Activa pentru restul butoanelor */
+    .active {
+        background: transparent !important;
+        color: #8a56d1 !important;
+        box-shadow: none;
+    }
+    
+    /* Ascundem logout */
+    .footerGroup {
+        display: none;
+    }
+}
+
+/* --- ORGANIZER SPECIFIC STYLES --- */
+
+/* 1. Starea Default: Iconita Verde, Border fin, Dimensiune STANDARD */
+.addButton {
+    color: #00e676 !important; /* Verde Neon */
+    border: 1px solid rgba(0, 230, 118, 0.3) !important;
+    /* NU punem width aici, il ia din .navItem */
+}
+
+/* 2. Hover: Doar fundalul se face verde transparent. */
+.addButton:hover {
+    background-color: rgba(0, 230, 118, 0.15) !important;
+    /* NU modificam width-ul! */
+}
+
+/* 3. Tooltip-ul (Bula de text): Verde cu text Negru */
+.addButton:hover .label {
+    background-color: #00e676 !important;
+    color: #000000 !important; /* Contrast maxim (Negru pe Verde) */
+}
+
+/* 4. Sageata Tooltip-ului: Verde */
+.addButton:hover .label::before {
+    border-right-color: #00e676 !important;
+}
+
+/* 5. Starea Activa (Cand esti pe pagina): Verde Plin */
+.addButton.active {
+    background-color: #00e676 !important;
+    color: #000000 !important;
+    box-shadow: 0 0 15px rgba(0, 230, 118, 0.4);
+}
+
+/* Asiguram ca tooltip-ul ramane corect si cand butonul e activ */
+.addButton.active .label {
+    background-color: #00e676 !important;
+    color: #000 !important;
+}
+.addButton.active .label::before {
+    border-right-color: #00e676 !important;
+}

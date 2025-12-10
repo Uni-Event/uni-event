@@ -1,27 +1,98 @@
-/* src/styles/Auth.css */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
-* {
+/* RESET & BASE STYLES */
+.auth-scope * {
   box-sizing: border-box;
 }
 
-body {
-  background-color: #f6f5f7;
+.auth-scope {
+  font-family: 'Montserrat', sans-serif;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
-  font-family: "Inter", sans-serif;
-  height: 100vh;
-  margin: 0;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f5f7fa 0%, #8a56d1 100%);
 }
 
-h1 {
+/* BACKGROUND EFFECTS */
+.auth-scope::before,
+.auth-scope::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(40px);
+  z-index: 1;
+}
+
+.auth-scope::before {
+  width: 300px;
+  height: 300px;
+  top: -100px;
+  left: -100px;
+}
+
+.auth-scope::after {
+  width: 200px;
+  height: 200px;
+  bottom: -50px;
+  right: -50px;
+  backdrop-filter: blur(30px);
+}
+
+/* MAIN CONTAINER */
+.auth-scope .container {
+  position: relative;
+  z-index: 2;
+  width: 900px;
+  max-width: 100%;
+  min-height: 600px;
+  border-radius: 30px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.1),
+    0 5px 15px rgba(0, 0, 0, 0.07);
+}
+
+/* CONTAINER BORDER EFFECT */
+.auth-scope .container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 30px;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0.2)
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* TYPOGRAPHY */
+.auth-scope h1 {
   font-weight: bold;
   margin: 0 0 20px 0;
 }
 
-p {
+.auth-scope p {
   font-size: 14px;
   font-weight: 100;
   line-height: 20px;
@@ -29,19 +100,19 @@ p {
   margin: 20px 0 30px;
 }
 
-span {
+.auth-scope span {
   font-size: 12px;
 }
 
-a {
+.auth-scope a {
   color: #333;
   font-size: 14px;
   text-decoration: none;
   margin: 15px 0;
 }
 
-/* Butoane */
-button {
+/* BUTTONS */
+.auth-scope button {
   border-radius: 20px;
   border: 1px solid #8a56d1;
   background-color: #8a56d1;
@@ -55,38 +126,47 @@ button {
   cursor: pointer;
 }
 
-button:active {
+.auth-scope button:active {
   transform: scale(0.95);
 }
 
-button:focus {
+.auth-scope button:focus {
   outline: none;
 }
 
-button.ghost {
+.auth-scope button.ghost {
   background-color: transparent;
   border-color: #ffffff;
 }
 
-.btn-primary {
+.auth-scope .btn-primary {
   width: 100%;
   margin-top: 10px;
 }
 
-.btn-google {
+.auth-scope .btn-google {
+  width: 100%;
+  padding: 12px 45px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border: 1px solid #ddd;
   background-color: white;
   color: #333;
-  border: 1px solid #ddd;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-top: 15px;
-  width: 100%;
+  cursor: pointer;
+  height: 42px;
+  min-height: 42px;
+  box-sizing: border-box;
+  margin-top: 10px;
 }
 
-/* Formulare */
-form {
+/* FORM STYLES */
+.auth-scope form {
   background-color: #ffffff;
   display: flex;
   align-items: center;
@@ -97,7 +177,7 @@ form {
   text-align: center;
 }
 
-input {
+.auth-scope input {
   background-color: #eee;
   border: none;
   padding: 12px 15px;
@@ -107,51 +187,35 @@ input {
   outline: none;
 }
 
-/* Container Principal */
-.container {
-  background-color: #fff;
-  border-radius: 30px;
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  position: relative;
-  overflow: hidden;
-  width: 900px;
-  max-width: 100%;
-  min-height: 600px;
-}
-
-.form-container {
+/* FORM CONTAINERS & TRANSITIONS */
+.auth-scope .form-container {
   position: absolute;
   top: 0;
   height: 100%;
+  width: 50%;
   transition: all 0.6s ease-in-out;
 }
 
-/* --- LOGICA PENTRU FORMULARE --- */
-
-/* Sign In (Login) - Implicit în DREAPTA */
-.sign-in-container {
+/* SIGN-IN CONTAINER */
+.auth-scope .sign-in-container {
   left: 0;
-  width: 50%;
   z-index: 2;
   transform: translateX(100%);
 }
 
-/* Când activăm panelul drept (Sign Up), Sign In dispare */
-.container.right-panel-active .sign-in-container {
+.auth-scope .container.right-panel-active .sign-in-container {
   transform: translateX(100%);
   opacity: 0;
 }
 
-/* Sign Up (Register) - Implicit în STÂNGA (Ascuns) */
-.sign-up-container {
+/* SIGN-UP CONTAINER */
+.auth-scope .sign-up-container {
   left: 0;
-  width: 50%;
   opacity: 0;
   z-index: 1;
 }
 
-/* Când activăm panelul drept, Sign Up apare în STÂNGA */
-.container.right-panel-active .sign-up-container {
+.auth-scope .container.right-panel-active .sign-up-container {
   transform: translateX(0);
   opacity: 1;
   z-index: 5;
@@ -159,24 +223,21 @@ input {
 }
 
 @keyframes show {
-  0%,
-  49.99% {
+  0%, 49.99% {
     opacity: 0;
     z-index: 1;
   }
-  50%,
-  100% {
+  50%, 100% {
     opacity: 1;
     z-index: 5;
   }
 }
 
-/* --- LOGICA PENTRU OVERLAY (Mov) --- */
-
-.overlay-container {
+/* OVERLAY CONTAINER */
+.auth-scope .overlay-container {
   position: absolute;
   top: 0;
-  left: 0; /* Pornim din stânga */
+  left: 0;
   width: 50%;
   height: 100%;
   overflow: hidden;
@@ -184,14 +245,12 @@ input {
   z-index: 100;
 }
 
-/* Când activăm Sign Up, movul se duce în DREAPTA */
-.container.right-panel-active .overlay-container {
+.auth-scope .container.right-panel-active .overlay-container {
   transform: translateX(100%);
 }
 
-.overlay {
-  background: #8a56d1;
-  background: -webkit-linear-gradient(to right, #8a56d1, #9b6be0);
+/* OVERLAY */
+.auth-scope .overlay {
   background: linear-gradient(to right, #8a56d1, #9b6be0);
   background-repeat: no-repeat;
   background-size: cover;
@@ -200,18 +259,17 @@ input {
   position: relative;
   left: 0;
   height: 100%;
-  width: 200%; /* Dublu lățime pentru efectul de glisare */
+  width: 200%;
   transform: translateX(0);
   transition: transform 0.6s ease-in-out;
 }
 
-/* Glisăm fundalul înapoi pentru a păstra continuitatea */
-.container.right-panel-active .overlay {
+.auth-scope .container.right-panel-active .overlay {
   transform: translateX(-50%);
 }
 
-/* Panourile de text din interiorul Overlay */
-.overlay-panel {
+/* OVERLAY PANELS */
+.auth-scope .overlay-panel {
   position: absolute;
   display: flex;
   align-items: center;
@@ -226,69 +284,63 @@ input {
   transition: transform 0.6s ease-in-out;
 }
 
-/* Panoul Stânga (Text pentru Login: "UniEvent... Conecteaza-te") */
-/* Acesta trebuie să fie vizibil când movul e în stânga */
-.overlay-left {
+.auth-scope .overlay-left {
   transform: translateX(0);
 }
 
-/* Când movul pleacă în dreapta, textul stâng pleacă și el (offset) */
-.container.right-panel-active .overlay-left {
+.auth-scope .container.right-panel-active .overlay-left {
   transform: translateX(-20%);
 }
 
-/* Panoul Dreapta (Text pentru Sign Up: "Bine ai venit") */
-/* Acesta este în jumătatea dreaptă a containerului mov */
-.overlay-right {
+.auth-scope .overlay-right {
   right: 0;
   transform: translateX(0);
 }
 
-/* Când movul e în stânga (default), textul drept e ascuns */
-/* Când movul ajunge în dreapta (.right-panel-active), acest text trebuie să fie centrat */
-.container.right-panel-active .overlay-right {
+.auth-scope .container.right-panel-active .overlay-right {
   transform: translateX(0);
 }
 
-/* Ajustări fine pentru input-uri și iconițe */
-.input-group {
+/* FORM ELEMENTS */
+.auth-scope .input-group {
   width: 100%;
   text-align: left;
   margin-bottom: 10px;
 }
 
-.input-group label {
+.auth-scope .input-group label {
   font-size: 12px;
   color: #666;
   margin-left: 5px;
 }
 
-.input-wrapper {
+.auth-scope .input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.icon {
+.auth-scope .icon {
   position: absolute;
   right: 15px;
   color: #999;
   cursor: pointer;
 }
 
-.row {
+/* UTILITY CLASSES */
+.auth-scope .row {
   display: flex;
   gap: 10px;
   width: 100%;
 }
 
-.logo-text {
+.auth-scope .logo-text {
   font-weight: bold;
   font-size: 1.2rem;
   z-index: 10;
 }
 
-.forgot-password {
+.auth-scope .forgot-password {
   color: #8a56d1;
   font-size: 12px;
   text-decoration: underline;
@@ -297,15 +349,350 @@ input {
   cursor: pointer;
 }
 
-.switch-text {
+.auth-scope .switch-text {
   margin-bottom: 20px;
   color: #333;
 }
 
-.switch-text span {
+.auth-scope .switch-text span {
   color: #8a56d1;
   font-weight: bold;
   cursor: pointer;
   text-decoration: underline;
   margin-left: 5px;
+}
+
+/* RESPONSIVE FALLBACK */
+@supports not (backdrop-filter: blur(20px)) {
+  .auth-scope .container {
+    background: rgba(255, 255, 255, 0.95);
+  }
+  
+  .auth-scope::before,
+  .auth-scope::after {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: none;
+  }
+}
+
+/* GOOGLE LOGIN SPECIFIC */
+.auth-scope .btn-google > div {
+  height: 100% !important;
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.auth-scope .btn-google button {
+  height: 100% !important;
+  width: 100% !important;
+  border-radius: 20px !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+}
+
+/* --- MOBILE RESPONSIVE STYLES --- */
+@media (max-width: 768px) {
+  /* 1. Fix pentru containerul principal să fie centrat perfect */
+  .auth-scope {
+    position: fixed; /* Folosim fixed pentru a acoperi tot ecranul */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow-y: auto; /* Permite scroll dacă conținutul e prea lung */
+    background: linear-gradient(135deg, #f5f7fa 0%, #8a56d1 100%);
+  }
+
+  /* 2. Reset complet pentru containerul principal */
+  .auth-scope .container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    min-height: 500px;
+    height: auto;
+    margin: 0 auto;
+    border-radius: 20px;
+    overflow: visible; /* Schimbăm din hidden pentru a permite afișarea corectă */
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 3. Eliminăm border effect pentru mobil (simplificăm) */
+  .auth-scope .container::before {
+    display: none;
+  }
+
+  /* 4. Ascundem complet partea de overlay (cea mov) */
+  .auth-scope .overlay-container {
+    display: none !important;
+  }
+
+  /* 5. Resetăm TOTUL pentru form-containere */
+  .auth-scope .form-container {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 500px;
+    padding: 40px 20px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* 6. Form styling pentru centrare perfectă */
+  .auth-scope form {
+    width: 100%;
+    max-width: 320px;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  /* 7. LOGICA CORECTĂ pentru afișare/ascundere */
+  /* În starea normală, arătăm doar Sign In */
+  .auth-scope .sign-in-container {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .auth-scope .sign-up-container {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+
+  /* Când avem clasa right-panel-active, inversăm */
+  .auth-scope .container.right-panel-active .sign-in-container {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+
+  .auth-scope .container.right-panel-active .sign-up-container {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* 8. Ajustări pentru conținut centrat */
+  .auth-scope h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+    width: 100%;
+  }
+
+  .auth-scope p {
+    font-size: 14px;
+    text-align: center;
+    color: #666;
+    margin: 0 0 25px 0;
+    line-height: 1.5;
+    width: 100%;
+  }
+
+  /* 9. Input-uri mai mari și centrate */
+  .auth-scope .input-group {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .auth-scope input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 16px; /* Important pentru mobil (evită zoom) */
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    background: #f8f8f8;
+    margin: 5px 0;
+  }
+
+  .auth-scope input:focus {
+    border-color: #8a56d1;
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(138, 86, 209, 0.1);
+  }
+
+  /* 10. Butoane mai mari pentru atingere ușoară */
+  .auth-scope button,
+  .auth-scope .btn-primary,
+  .auth-scope .btn-google {
+    width: 100%;
+    padding: 16px 20px;
+    font-size: 15px;
+    border-radius: 12px;
+    margin-top: 10px;
+    height: 52px;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .auth-scope .btn-google {
+    border: 1px solid #ddd;
+    background: white;
+    color: #333;
+    font-weight: 600;
+  }
+
+  /* 11. Link-uri și text */
+  .auth-scope .forgot-password {
+    align-self: flex-end;
+    margin: 10px 0 20px 0;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .auth-scope .switch-text {
+    text-align: center;
+    margin: 25px 0 0 0;
+    font-size: 15px;
+    width: 100%;
+  }
+
+  /* 12. Separator "SAU" */
+  .auth-scope .separator {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 25px 0;
+    color: #999;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .auth-scope .separator::before,
+  .auth-scope .separator::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e0e0e0;
+  }
+
+  .auth-scope .separator span {
+    padding: 0 15px;
+  }
+
+  /* 13. Ajustări pentru background blur effects */
+  .auth-scope::before {
+    width: 150px;
+    height: 150px;
+    top: -50px;
+    left: -50px;
+  }
+
+  .auth-scope::after {
+    width: 120px;
+    height: 120px;
+    bottom: -40px;
+    right: -40px;
+  }
+
+  /* 14. Fix pentru butonul Google */
+  .auth-scope .btn-google > div,
+  .auth-scope .btn-google button {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 12px !important;
+    font-size: 15px !important;
+  }
+
+  /* 15. Rânduri pentru nume/prenume */
+  .auth-scope .row {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .auth-scope .row .input-group {
+    flex: 1;
+    min-width: calc(50% - 7.5px);
+  }
+
+  /* 16. Animăție smooth pentru switch între login/register */
+  .auth-scope .form-container {
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* 17. Pentru ecrane foarte mici */
+  @media (max-width: 480px) {
+    .auth-scope .container {
+      max-width: 100%;
+      min-height: 450px;
+      border-radius: 15px;
+    }
+    
+    .auth-scope .form-container {
+      padding: 30px 15px !important;
+      min-height: 450px;
+    }
+    
+    .auth-scope h1 {
+      font-size: 24px;
+    }
+    
+    .auth-scope .row {
+      flex-direction: column;
+      gap: 0;
+    }
+    
+    .auth-scope .row .input-group {
+      min-width: 100%;
+    }
+  }
+
+  /* 18. Pentru ecrane înalte */
+  @media (max-height: 600px) {
+    .auth-scope .container {
+      min-height: 400px;
+    }
+    
+    .auth-scope .form-container {
+      min-height: 400px;
+      padding: 20px 15px !important;
+    }
+    
+    .auth-scope h1 {
+      font-size: 22px;
+      margin-bottom: 15px;
+    }
+    
+    .auth-scope .input-group {
+      margin-bottom: 12px;
+    }
+  }
 }

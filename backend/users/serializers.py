@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import CustomUser, OrganizerRequest
 from django.contrib.auth.password_validation import validate_password
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 # Serializer for CustomUser model
 class UserSerializer(serializers.ModelSerializer):
@@ -40,3 +41,16 @@ class OrganizerRequestSerializer(serializers.ModelSerializer):
         model = OrganizerRequest
         fields = ["id", "user", "organization_name", "details", "status", "created_at"]
         read_only_fields = ["id", "user", "status", "created_at"]
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Aici adaugam informatiile extra in token
+        token['email'] = user.email
+        token['is_organizer'] = user.is_organizer
+        token['is_staff'] = user.is_staff
+        token['full_name'] = f"{user.first_name} {user.last_name}"
+
+        return token

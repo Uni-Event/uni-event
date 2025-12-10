@@ -1,25 +1,35 @@
-import axios from "axios";
+/**
+ * api.js:
+ * - Instanță Axios preconfigurată pentru comunicarea cu backend-ul.
+ * - Adaugă automat token-ul JWT în header-ul Authorization pentru toate cererile.
+ * - Folosește URL-ul din variabila de mediu VITE_API_BASE_URL sau fallback la localhost.
+ *
+ * Exemplu utilizare:
+ * import api from './api';
+ * api.get('/api/products/')
+ *    .then(res => console.log(res.data));
+ */
 
-// Configuram URL-ul de baza catre Django
+import axios from 'axios';
+import { ACCESS_TOKEN } from '../constants';
+
 const api = axios.create({
-  baseURL: "http://127.0.0.1:8000/api/",
-});
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
+})
 
-// Interceptor: Adauga automat token-ul la fiecare cerere daca exista
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("authTokens")
-      ? JSON.parse(localStorage.getItem("authTokens")).access
-      : null;
+    const accessToken = localStorage.getItem(ACCESS_TOKEN);
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (accessToken) {
+      config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
+
     return config;
   },
   (error) => {
     return Promise.reject(error);
   }
-);
+)
 
 export default api;

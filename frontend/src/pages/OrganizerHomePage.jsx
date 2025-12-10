@@ -1,15 +1,15 @@
-import React from 'react';
+import React from 'react'
 import Layout from '../components/Layout'; 
 
-function HomePage() {
+function OrganizerHomePage() {
   return (
     <Layout>
       <div>
-        <h1>HomePage Student</h1>
+        <h1>OrganizerHomePage Organizator</h1>
         <p>Aici vor fi listate evenimentele.</p>
       </div>
     </Layout>
   )
 }
 
-export default HomePage;
+export default OrganizerHomePage

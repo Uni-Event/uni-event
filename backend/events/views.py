@@ -7,6 +7,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 # List and Create Events
 class EventListCreateView(generics.ListCreateAPIView):
+    """
+    Docstring for EventListCreateView
+    """
     serializer_class = EventSerializer
     queryset = Event.objects.all()
 

@@ -4,7 +4,8 @@ from .views import (
     ProfileView,
     OrganizerRequestCreateView,
     OrganizerRequestListAdminView,
-    OrganizerRequestUpdateAdminView
+    OrganizerRequestUpdateAdminView,
+    GoogleLoginView
 )
 
 urlpatterns = [
@@ -15,4 +16,6 @@ urlpatterns = [
     path("organizer-request/", OrganizerRequestCreateView.as_view()),
     path("admin/organizer-requests/", OrganizerRequestListAdminView.as_view()),
     path("admin/organizer-requests/<int:pk>/", OrganizerRequestUpdateAdminView.as_view()),
+
+    path("google/", GoogleLoginView.as_view(), name="google_login"),
 ]
