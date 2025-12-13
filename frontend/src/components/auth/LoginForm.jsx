@@ -155,7 +155,7 @@ const LoginForm = ({ showPassword, togglePassword, setIsSignUp, navigate }) => {
               size="large"
               shape="pill"
               text="continue_with"
-              width="100%"
+              width="300"
             />
           </div>
         </div>
