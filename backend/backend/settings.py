@@ -12,12 +12,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
-# 29.11.25 Importuri noi.
-from datetime import timedelta # For setting token expiration times
-from dotenv import load_dotenv # For loading environment variables from a .env file
-import os # For accessing environment variables
+from datetime import timedelta # 29.11.25 For setting token expiration times
+from dotenv import load_dotenv # 29.11.25 For loading environment variables from a .env file
+import os                      # 29.11.25 For accessing environment variables
 
-load_dotenv()  # Load environment variables from a .env file if present
+load_dotenv()                  # 29.11.25 Load environment variables from a .env file if present
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -71,14 +70,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "users",  # 29.11.25 Custom user app
-    "events",  # 29.11.25 Events app
-    "interactions",  # 29.11.25 Interactions app
-    "rest_framework",  # 29.11.25 Added for Django REST Framework
-    "corsheaders",  # 29.11.25 Added for handling CORS
-    "django_filters",  # 29.11.25 Added for filtering support
-    "drf_yasg",  # 29.11.25 Added for API documentation
-    "django_extensions", # 06.12.25 Added for additional management commands
+    "users",                # 29.11.25 Custom user app
+    "events",               # 29.11.25 Events app
+    "interactions",         # 29.11.25 Interactions app
+    "rest_framework",       # 29.11.25 Added for Django REST Framework
+    "corsheaders",          # 29.11.25 Added for handling CORS
+    "django_filters",       # 29.11.25 Added for filtering support
+    "drf_yasg",             # 29.11.25 Added for API documentation
+    "django_extensions",    # 06.12.25 Added for additional management commands
 ]
 
 MIDDLEWARE = [
@@ -164,6 +163,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True  # 29.11.25 Allow all origins for CORS (development only)
-CORS_ALLOWS_CREDENTIALS = True  # 29.11.25 Allow cookies to be included in cross-site HTTP requests
-AUTH_USER_MODEL = 'users.CustomUser' # 29.11.25 Use custom user model
+CORS_ALLOW_ALL_ORIGINS = True           # 29.11.25 Allow all origins for CORS (development only)
+CORS_ALLOWS_CREDENTIALS = True          # 29.11.25 Allow cookies to be included in cross-site HTTP requests
+AUTH_USER_MODEL = 'users.CustomUser'    # 29.11.25 Use custom user model
+
+# 15.12.25 Media files settings
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

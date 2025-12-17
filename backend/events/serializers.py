@@ -71,7 +71,7 @@ class EventSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["id", "organizer", "created_at", "updated_at", "status"]
 
-
+# 16.12.2025
 class EventCreateSerializer(serializers.ModelSerializer):
     location_name = serializers.CharField(write_only=True)
     location_address = serializers.CharField(write_only=True, required=False, allow_blank=True)

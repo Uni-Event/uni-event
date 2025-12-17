@@ -45,7 +45,6 @@ def google_get_or_create_user(user_data):
     except User.DoesNotExist:
         user = User.objects.create_user(
             email=user_data['email'],
-            username=user_data['email'],
             password=str(uuid.uuid4()), # Parola random
             first_name=user_data['first_name'],
             last_name=user_data['last_name'],
