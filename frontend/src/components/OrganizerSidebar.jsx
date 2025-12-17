@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { FaPlus, FaGlobe, FaTasks, FaChartPie, FaSignOutAlt } from 'react-icons/fa';
 import styles from '../styles/Sidebar.module.css';
 
-const OrganizerSidebar = () => {
+const OrganizerSidebar = ({ onOpenCreate }) => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -12,10 +12,9 @@ const OrganizerSidebar = () => {
 
     const links = [
         { 
-            to: "/organizer/create", 
             icon: <FaPlus />, 
             label: "Creează Eveniment", 
-            isSpecial: true // Flag pentru butonul verde
+            isSpecial: true 
         },
         { 
             to: "/", 
@@ -36,25 +35,51 @@ const OrganizerSidebar = () => {
 
     return (
         <div className={styles.sidebar}>
-            {/* Navigarea de sus */}
             <div className={styles.navGroup}>
-                {links.map((link) => (
-                    <NavLink 
-                        key={link.to} 
-                        to={link.to} 
-                        className={({ isActive }) => 
-                            `${styles.navItem} ${isActive ? styles.active : ''} ${link.isSpecial ? styles.addButton : ''}`
-                        }
-                    >
-                        <div className={styles.iconWrapper}>
-                            {link.icon}
-                        </div>
-                        <span className={styles.label}>{link.label}</span>
-                    </NavLink>
-                ))}
+                {links.map((link, index) => {
+                    if (link.isSpecial) {
+                        return (
+                            <button 
+                                key={index}
+                                onClick={onOpenCreate}
+                                className={`${styles.navItem} ${styles.addButton}`}
+                                style={{
+                                    border: 'none',
+                                    background: 'transparent', 
+                                    width: '100%',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    textAlign: 'left',
+                                    fontFamily: 'inherit',
+                                    fontSize: 'inherit'
+                                }}
+                            >
+                                <div className={styles.iconWrapper}>
+                                    {link.icon}
+                                </div>
+                                <span className={styles.label}>{link.label}</span>
+                            </button>
+                        );
+                    }
+
+                    return (
+                        <NavLink 
+                            key={link.to} 
+                            to={link.to} 
+                            className={({ isActive }) => 
+                                `${styles.navItem} ${isActive ? styles.active : ''}`
+                            }
+                        >
+                            <div className={styles.iconWrapper}>
+                                {link.icon}
+                            </div>
+                            <span className={styles.label}>{link.label}</span>
+                        </NavLink>
+                    );
+                })}
             </div>
 
-            {/* Butonul de Logout (Jos) */}
             <div className={styles.footerGroup}>
                 <button onClick={handleLogout} className={`${styles.navItem} ${styles.logoutBtn}`}>
                     <div className={styles.iconWrapper}><FaSignOutAlt /></div>

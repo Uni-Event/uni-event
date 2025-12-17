@@ -16,7 +16,6 @@
     padding: 25px 0;
     z-index: 990;
     
-    /* Umbra subtila */
     box-shadow: 0 8px 32px rgba(138, 86, 209, 0.2);
 }
 
@@ -32,14 +31,14 @@
 .navItem {
     display: flex;
     align-items: center;
-    justify-content: center; /* Centram totul */
+    justify-content: center; 
     color: white;
     text-decoration: none;
     background: transparent;
     border: none;
     cursor: pointer;
     padding: 0;
-    border-radius: 12px; /* Colturi asortate cu sidebarul */
+    border-radius: 12px; 
     transition: all 0.2s ease;
     
     width: 42px; 
@@ -62,11 +61,11 @@
 /* --- TOOLTIP (Textul plutitor) --- */
 .label {
     position: absolute;
-    left: 55px; /* Pozitionat in DREAPTA iconitei */
+    left: 55px; 
     top: 50%;
     transform: translateY(-50%) translateX(-10px);
     
-    background-color: #333; /* Fundal inchis */
+    background-color: #333; 
     color: white;
     padding: 6px 12px;
     border-radius: 6px;
@@ -77,9 +76,9 @@
     /* Ascuns implicit */
     opacity: 0;
     visibility: hidden;
-    pointer-events: none; /* Nu incurca mouse-ul */
+    pointer-events: none; 
     
-    transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Efect de "bouncy" mic */
+    transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
     z-index: 1000;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
@@ -100,11 +99,10 @@
 
 /* --- HOVER EFFECT --- */
 
-/* La hover pe buton, apare tooltip-ul */
 .navItem:hover .label {
     opacity: 1;
     visibility: visible;
-    transform: translateY(-50%) translateX(0); /* Aluneca la locul lui */
+    transform: translateY(-50%) translateX(0);
 }
 
 /* Hover pe buton (doar fundal) */
@@ -143,6 +141,83 @@
     border-right-color: #d32f2f;
 }
 
+/* --- ORGANIZER SPECIFIC STYLES --- */
+
+/* 1. Aspectul butonului (FIXAT LA DIMENSIUNI EXACTE) */
+.addButton {
+    /* DIMENSIUNI FIXE */
+    width: 42px !important;  
+    height: 42px !important;
+    
+    /* CENTRARE PERFECTĂ */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    padding: 0 !important; 
+    
+    /* STIL VIZUAL */
+    background-color: #00e676 !important; /* Verde Neon Plin */
+    color: #8a56d1 !important; /* Mov (efect decupat) */
+    
+    border: none !important;
+    border-radius: 12px !important;
+    
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    opacity: 1 !important;
+    
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease !important;
+    transform-origin: center center !important;
+}
+
+/* FORȚĂM ICONIȚA SĂ FIE ÎN CENTRUL BUTONULUI */
+.addButton .iconWrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 1.2rem;
+}
+
+/* 2. Hover: Doar GLOW + Scalare fluidă */
+.addButton:hover {
+    background-color: #00e676 !important;
+    
+    /* EFECT NEON */
+    box-shadow: 0 0 20px 4px rgba(0, 230, 118, 0.6) !important;
+    transform: scale(1.1); 
+}
+
+.addButton .label {
+    left: 45.5px !important;
+}
+
+/* 3. Tooltip-ul */
+.addButton:hover .label {
+    background-color: #00e676 !important;
+    color: #8a56d1 !important;
+    font-weight: 800;
+    box-shadow: 0 0 15px rgba(0, 230, 118, 0.4);
+    
+    /* Prevenim ca tooltip-ul să fie afectat de scalarea butonului */
+    transform: translateY(-50%) translateX(0) scale(0.9); 
+}
+
+/* 4. Săgeata Tooltip-ului */
+.addButton:hover .label::before {
+    border-right-color: #00e676 !important;
+}
+
+/* 5. Starea Active */
+.addButton.active {
+    background-color: #00e676 !important;
+    color: #8a56d1 !important;
+    box-shadow: 0 0 15px rgba(0, 230, 118, 0.4) !important;
+}
+
 /* --- MOBILE BOTTOM BAR --- */
 @media screen and (max-width: 768px) {
     .sidebar {
@@ -161,7 +236,7 @@
         
         /* Aspect Flat & Alb */
         background: #ffffff;
-        box-shadow: 0 -1px 5px rgba(0,0,0,0.05); /* Umbra foarte fina sus */
+        box-shadow: 0 -1px 5px rgba(0,0,0,0.05);
         border-top: 1px solid #f0f0f0;
     }
 
@@ -173,57 +248,115 @@
         height: 100%;
     }
 
-    /* Resetare TOTALA pentru toate butoanele (navItem) */
+    /* Resetare TOTALA pentru toate butoanele */
     .navItem {
         width: auto !important;
         height: 100% !important;
         border-radius: 0 !important;
-        flex: 1; /* Sa ocupe spatiu egal */
+        flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         
-        /* Eliminare orice stil de buton */
+        /* Eliminare orice stil de buton special */
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
         outline: none !important;
         
-        color: #999; /* Culoare implicita gri */
+        color: #999;
         padding: 0 !important;
         margin: 0 !important;
+        
+        /* Anulează animațiile de la desktop */
+        transform: none !important;
+        transition: none !important;
     }
 
-    /* --- FIX SPECIFIC PENTRU BUTONUL VERDE (addButton) --- */
-    /* Aici e cheia: suprascriem orice border de desktop */
-    .addButton,
-    .addButton:hover,
-    .addButton:focus,
-    .addButton.active {
-        border: 0 !important;         /* SCOATE CONTURUL */
-        border-color: transparent !important;
-        outline: none !important;
-        box-shadow: none !important;  /* Scoate umbra */
-        background: transparent !important; /* Scoate fundalul */
-        width: auto !important;
-    }
-
-    /* Doar culoarea iconitei ramane verde */
     .addButton {
-        color: #00e676 !important;
+        width: auto !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        outline: none !important;
+        
+        color: #999 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        
+        transform: none !important;
+        transition: none !important;
+        transform-origin: center center !important;
     }
     
-    /* Cand apesi pe el */
+    /* RESET COMPLET pentru iconWrapper în addButton pe mobil */
+    .addButton .iconWrapper {
+        /* Resetează toate stilurile speciale de la desktop */
+        width: auto !important;
+        height: auto !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 1.4rem !important; 
+        margin: 0 !important;
+        padding: 0 !important;
+        margin-bottom: 2px !important; 
+        color: inherit !important;
+    }
+    
+    .addButton:hover {
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+        transform: none !important;
+        color: #999 !important;
+    }
+    
+    .addButton:hover .iconWrapper {
+        transform: none !important;
+        color: inherit !important;
+    }
+    
+    .addButton:hover .label {
+        background: transparent !important;
+        color: inherit !important;
+        box-shadow: none !important;
+        transform: none !important;
+        font-weight: 500 !important; 
+    }
+    
+    .addButton:hover .label::before {
+        display: none !important;
+    }
+    
+    /* Starea activă pentru addButton pe mobil */
     .addButton.active {
-        color: #00c853 !important;
+        background: transparent !important;
+        color: #8a56d1 !important;
+        box-shadow: none !important;
+    }
+    
+    /* Starea activă pentru iconWrapper în addButton pe mobil */
+    .addButton.active .iconWrapper {
+        color: #8a56d1 !important;
     }
 
+    /* Stiluri comune pentru toate iconWrapper pe mobil */
     .iconWrapper {
         font-size: 1.4rem;
-        margin-bottom: 2px;
+        margin-bottom: 2px; 
         width: auto;
         height: auto;
+        color: inherit !important;
     }
 
     /* Textul de sub iconita */
@@ -242,6 +375,7 @@
         box-shadow: none;
         display: block;
         pointer-events: none;
+        transition: none !important;
     }
     
     .label::before {
@@ -250,59 +384,29 @@
 
     .navItem:hover .label {
         transform: none;
+        background: transparent !important;
+        color: inherit !important;
+        box-shadow: none !important;
     }
 
-    /* Starea Activa pentru restul butoanelor */
+    /* Hover pe mobil - doar schimbare subtilă de culoare */
+    .navItem:hover {
+        color: #8a56d1 !important;
+    }
+    
+    .addButton:hover {
+        color: #8a56d1 !important;
+    }
+
+    /* Starea Activa pentru toate butoanele */
     .active {
         background: transparent !important;
         color: #8a56d1 !important;
         box-shadow: none;
     }
     
-    /* Ascundem logout */
+    /* Ascundem logout pe mobil */
     .footerGroup {
         display: none;
     }
-}
-
-/* --- ORGANIZER SPECIFIC STYLES --- */
-
-/* 1. Starea Default: Iconita Verde, Border fin, Dimensiune STANDARD */
-.addButton {
-    color: #00e676 !important; /* Verde Neon */
-    border: 1px solid rgba(0, 230, 118, 0.3) !important;
-    /* NU punem width aici, il ia din .navItem */
-}
-
-/* 2. Hover: Doar fundalul se face verde transparent. */
-.addButton:hover {
-    background-color: rgba(0, 230, 118, 0.15) !important;
-    /* NU modificam width-ul! */
-}
-
-/* 3. Tooltip-ul (Bula de text): Verde cu text Negru */
-.addButton:hover .label {
-    background-color: #00e676 !important;
-    color: #000000 !important; /* Contrast maxim (Negru pe Verde) */
-}
-
-/* 4. Sageata Tooltip-ului: Verde */
-.addButton:hover .label::before {
-    border-right-color: #00e676 !important;
-}
-
-/* 5. Starea Activa (Cand esti pe pagina): Verde Plin */
-.addButton.active {
-    background-color: #00e676 !important;
-    color: #000000 !important;
-    box-shadow: 0 0 15px rgba(0, 230, 118, 0.4);
-}
-
-/* Asiguram ca tooltip-ul ramane corect si cand butonul e activ */
-.addButton.active .label {
-    background-color: #00e676 !important;
-    color: #000 !important;
-}
-.addButton.active .label::before {
-    border-right-color: #00e676 !important;
 }
