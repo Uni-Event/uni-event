@@ -70,3 +70,44 @@ class EventSerializer(serializers.ModelSerializer):
             "created_at", "updated_at",
         ]
         read_only_fields = ["id", "organizer", "created_at", "updated_at", "status"]
+
+
+class EventCreateSerializer(serializers.ModelSerializer):
+    location_name = serializers.CharField(write_only=True)
+    location_address = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    google_maps_link = serializers.URLField(write_only=True, required=False, allow_blank=True)
+
+    # FK-uri 
+    faculty = serializers.PrimaryKeyRelatedField(queryset=Faculty.objects.all(), required=True)
+    department = serializers.PrimaryKeyRelatedField(queryset=Department.objects.all(), required=False, allow_null=True)
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), required=False, allow_null=True)
+
+    class Meta:
+        model = Event
+        fields = [
+            "title", "description", 
+            "faculty", "department", "category",
+            "location_name", "location_address", "google_maps_link", 
+            "start_date", "end_date", 
+            "max_participants", 
+            "status",
+            "image", "file"
+        ]
+    
+    def create(self, validated_data):
+        # 1. Extragem datele despre locatie din request
+        loc_name = validated_data.pop('location_name')
+        loc_addr = validated_data.pop('location_address', '')
+        g_link = validated_data.pop('google_maps_link', '')
+
+        # 2. Cream o noua locatie
+        new_location = Location.objects.create(
+            name=loc_name,
+            address=loc_addr,
+            google_maps_link=g_link
+        )
+
+        # 3. Cream evenimentul legat de aceasta noua locatie
+        event = Event.objects.create(location=new_location, **validated_data)
+        
+        return event
