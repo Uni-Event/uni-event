@@ -41,7 +41,7 @@ function Navbar() {
 
   const navLinks = [
     { to: "/", label: "Acasă" },
-    { to: "/events", label: "Toate Evenimentele" },
+    { to: "/notifications", label: "Notificări" },
   ];
 
   return (
