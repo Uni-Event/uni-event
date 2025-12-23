@@ -6,6 +6,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import NotFoundPage from "./pages/NotFoundPage";
 import AuthPage from "./pages/AuthPage";
 import DashboardWrapper from "./pages/DashboardWrapper";
+import OrganizerDashboardPage from "./pages/OrganizerDashboardPage";
 
 function Logout() {
   localStorage.clear();
@@ -29,6 +30,15 @@ function App() {
           element={
             <ProtectedRoute>
               <DashboardWrapper />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/organizer/dashboard" 
+          element={
+            <ProtectedRoute requiredRole="organizer">
+              <OrganizerDashboardPage />
             </ProtectedRoute>
           } 
         />
