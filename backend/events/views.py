@@ -79,3 +79,4 @@ class EventDetailView(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method in ["PUT", "PATCH", "DELETE"]:
             return [IsEventOrganizer()]
         return [permissions.AllowAny()]
+
