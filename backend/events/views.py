@@ -31,8 +31,27 @@ class EventListCreateView(generics.ListCreateAPIView):
             return [permissions.IsAuthenticated(), IsOrganizer()] 
         return [permissions.AllowAny()] 
 
-# TODO (Diana): Add Faculty, Department and Category endpoints
-# Work on backend branch and open a pull request to main when done.
+# Retrieve Faculties, Departments, Categories - DIANA
+class FacultyListView(generics.ListAPIView):
+    """ Listare facultăți. """
+
+    queryset = Faculty.objects.all()
+    serializer_class = FacultySerializer
+    permission_classes = [permissions.AllowAny] 
+
+class DepartmentListView(generics.ListAPIView):
+    """ Listare departamente. """
+
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+    permission_classes = [permissions.AllowAny]
+
+class CategoryListView(generics.ListAPIView):
+    """ Listare categorii. """
+
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.AllowAny]
 
 # Retrieve, Update, Delete Event
 class EventDetailView(generics.RetrieveUpdateDestroyAPIView):
