@@ -20,7 +20,6 @@ class Department(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=50) # Ex: Cultural, Sportiv
-    # Am scos icon_name - nu este necesar acum
 
     class Meta:
         verbose_name_plural = "Categories"
