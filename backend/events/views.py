@@ -31,6 +31,9 @@ class EventListCreateView(generics.ListCreateAPIView):
             return [permissions.IsAuthenticated(), IsOrganizer()] 
         return [permissions.AllowAny()] 
 
+# TODO (Diana): Add Faculty, Department and Category endpoints
+# Work on backend branch and open a pull request to main when done.
+
 # Retrieve, Update, Delete Event
 class EventDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = EventSerializer

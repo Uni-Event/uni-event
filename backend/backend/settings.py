@@ -163,9 +163,11 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 CORS_ALLOW_ALL_ORIGINS = True           # 29.11.25 Allow all origins for CORS (development only)
 CORS_ALLOWS_CREDENTIALS = True          # 29.11.25 Allow cookies to be included in cross-site HTTP requests
 AUTH_USER_MODEL = 'users.CustomUser'    # 29.11.25 Use custom user model
+
 
 # 15.12.25 Media files settings
 MEDIA_URL = '/media/'
