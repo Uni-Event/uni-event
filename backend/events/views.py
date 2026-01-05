@@ -1,12 +1,25 @@
 from rest_framework import generics, permissions, filters
-from .models import Event
-from .serializers import EventSerializer, EventCreateSerializer
-from users.permissions import IsOrganizer
-from .permissions import IsEventOrganizer
 from django_filters.rest_framework import DjangoFilterBackend
+
+from .models import Event, Faculty, Department, Category
+from .serializers import (
+    EventSerializer,
+    EventCreateSerializer,
+    FacultySerializer,
+    DepartmentSerializer,
+    CategorySerializer,
+)
+from .permissions import IsEventOrganizer
+
+# Project-wide imports
+from users.permissions import IsOrganizer
 
 # List and Create Events
 class EventListCreateView(generics.ListCreateAPIView):   
+    """
+    Listare evenimente publicate (GET) și creare evenimente noi (POST).
+    """
+
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['faculty', 'category', 'status', 'start_date']
     search_fields = ["title", "description"]
@@ -31,11 +44,34 @@ class EventListCreateView(generics.ListCreateAPIView):
             return [permissions.IsAuthenticated(), IsOrganizer()] 
         return [permissions.AllowAny()] 
 
-# TODO (Diana): Add Faculty, Department and Category endpoints
-# Work on backend branch and open a pull request to main when done.
+# Retrieve Faculties, Departments, Categories - DIANA
+class FacultyListView(generics.ListAPIView):
+    """ Listare facultăți. """
+
+    queryset = Faculty.objects.all()
+    serializer_class = FacultySerializer
+    permission_classes = [permissions.AllowAny] 
+
+class DepartmentListView(generics.ListAPIView):
+    """ Listare departamente. """
+
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+    permission_classes = [permissions.AllowAny]
+
+class CategoryListView(generics.ListAPIView):
+    """ Listare categorii. """
+
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.AllowAny]
 
 # Retrieve, Update, Delete Event
 class EventDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Vizualizare, editare și ștergere eveniment.
+    """
+
     serializer_class = EventSerializer
     queryset = Event.objects.all()
 
@@ -43,3 +79,4 @@ class EventDetailView(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method in ["PUT", "PATCH", "DELETE"]:
             return [IsEventOrganizer()]
         return [permissions.AllowAny()]
+
