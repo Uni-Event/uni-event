@@ -3,14 +3,6 @@ from django.urls import path
 
 from .views import EventListCreateView, EventDetailView
 
-from .views import (
-  EventListCreateView, 
-  EventDetailView,
-  FacultyListView, 
-  DepartmentListView, 
-  CategoryListView
-)
-
 
 from .views import (
   EventListCreateView, 
