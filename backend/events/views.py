@@ -1,12 +1,26 @@
 from rest_framework import generics, permissions, filters
-from .models import Event
-from .serializers import EventSerializer, EventCreateSerializer
-from users.permissions import IsOrganizer
-from .permissions import IsEventOrganizer
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Count
+
+from .models import Event, Faculty, Department, Category
+from .serializers import (
+    EventSerializer,
+    EventCreateSerializer,
+    FacultySerializer,
+    DepartmentSerializer,
+    CategorySerializer,
+)
+from .permissions import IsEventOrganizer
+
+# Project-wide imports
+from users.permissions import IsOrganizer
 
 # List and Create Events
 class EventListCreateView(generics.ListCreateAPIView):   
+    """
+    Listare evenimente publicate (GET) și creare evenimente noi (POST).
+    """
+
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['faculty', 'category', 'status', 'start_date']
     search_fields = ["title", "description"]
@@ -16,7 +30,7 @@ class EventListCreateView(generics.ListCreateAPIView):
         Această metodă decide ce evenimente sunt returnate.
         Pentru lista publică (GET), vrem doar evenimentele PUBLICATE.
         """
-        return Event.objects.filter(status='published').order_by('-start_date')
+        return Event.objects.filter(status='published').annotate(tickets_count=Count('tickets')).order_by('-start_date')
     
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -55,10 +69,19 @@ class CategoryListView(generics.ListAPIView):
 
 # Retrieve, Update, Delete Event
 class EventDetailView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = EventSerializer
-    queryset = Event.objects.all()
+    """
+    Vizualizare, editare și ștergere eveniment.
+    """
+
+    queryset = Event.objects.annotate(tickets_count=Count('tickets'))
+
+    def get_serializer_class(self):
+        if self.request.method in ["PUT", "PATCH"]:
+            return EventCreateSerializer
+        return EventSerializer
 
     def get_permissions(self):
         if self.request.method in ["PUT", "PATCH", "DELETE"]:
             return [IsEventOrganizer()]
         return [permissions.AllowAny()]
+
