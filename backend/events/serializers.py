@@ -33,7 +33,16 @@ class LocationSerializer(serializers.ModelSerializer):
 # Serializer for Event model
 class EventSerializer(serializers.ModelSerializer):
     organizer = UserSerializer(read_only=True)
+    tickets_count = serializers.IntegerField(read_only=True)
+    seats_left = serializers.SerializerMethodField(read_only=True)
 
+    def get_tickets_count(self, obj):
+        return getattr(obj, "tickets_count", None) or obj.tickets.count()
+
+    def get_seats_left(self, obj):
+        sold = self.get_tickets_count(obj)
+        return max(obj.max_participants - sold, 0)
+    
     faculty = FacultySerializer(read_only=True)
     faculty_id = serializers.PrimaryKeyRelatedField(
         queryset=Faculty.objects.all(), source="faculty", write_only=True, allow_null=True
@@ -65,6 +74,8 @@ class EventSerializer(serializers.ModelSerializer):
             "location", "location_id",
             "start_date", "end_date",
             "max_participants",
+            "tickets_count",
+            "seats_left",
             "status",
             "image", "file",
             "created_at", "updated_at",
