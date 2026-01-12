@@ -105,6 +105,32 @@ class EventCreateSerializer(serializers.ModelSerializer):
             "image", "file"
         ]
     
+    def update(self, instance, validated_data):
+        loc_name = validated_data.pop("location_name", None)
+        loc_addr = validated_data.pop("location_address", None)
+        g_link = validated_data.pop("google_maps_link", None)
+
+        if instance.location:
+            if loc_name is not None:
+                instance.location.name = loc_name
+            if loc_addr is not None:
+                instance.location.address = loc_addr
+            if g_link is not None:
+                instance.location.google_maps_link = g_link
+            instance.location.save()
+        else:
+         if loc_name:
+            instance.location = Location.objects.create(
+                name=loc_name,
+                address=loc_addr or "",
+                google_maps_link=g_link or ""
+            )
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
     def create(self, validated_data):
         # 1. Extragem datele despre locatie din request
         loc_name = validated_data.pop('location_name')

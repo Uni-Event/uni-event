@@ -67,6 +67,14 @@ class CategoryListView(generics.ListAPIView):
     serializer_class = CategorySerializer
     permission_classes = [permissions.AllowAny]
 
+class MyEventsListView(generics.ListAPIView):
+    serializer_class = EventSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Event.objects.filter(organizer=self.request.user).annotate(tickets_count=Count('tickets')).order_by("-created_at")
+
+
 # Retrieve, Update, Delete Event
 class EventDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
