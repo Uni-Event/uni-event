@@ -1,0 +1,50 @@
+.page {
+  padding: 0;
+}
+
+.header {
+  margin-bottom: 18px;
+}
+
+.title {
+  font-size: 2rem;
+  color: #2d3748;
+  margin: 0 0 6px;
+  font-weight: 900;
+}
+
+.subtitle {
+  color: #718096;
+  margin: 0;
+  font-weight: 700;
+}
+
+.error {
+  color: #b91c1c;
+  font-weight: 800;
+}
+
+.section {
+  margin-top: 18px;
+}
+
+.sectionTitle {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #111;
+  margin-bottom: 10px;
+}
+
+.list {
+  display: grid;
+  gap: 12px;
+}
+
+.empty {
+  padding: 14px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 14px;
+  color: #475569;
+  font-weight: 800;
+  background: #fafafa;
+}

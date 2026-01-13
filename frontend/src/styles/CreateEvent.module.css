@@ -15,6 +15,13 @@
     padding: 0px 20px; 
 }
 
+.fieldError {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #d32f2f;
+}
+
 /* --- Content (Cardul) --- */
 .modalContent {
     background: white;

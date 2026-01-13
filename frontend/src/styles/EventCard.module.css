@@ -100,7 +100,7 @@
   font-weight: 600;
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background 0.2s;
 }
 
 .detailsBtn:hover {
@@ -126,6 +126,16 @@
   border-color: #e53e3e;
   color: #e53e3e;
   background-color: #fff5f5;
+}
+
+.favBtnActive {
+  border-color: #e53e3e;
+  color: #e53e3e;
+  background-color: #fff5f5;
+}
+
+.favBtnActive svg {
+  color: #e53e3e;
 }
 
 /* --- Butonul "Vezi afisul" --- */
