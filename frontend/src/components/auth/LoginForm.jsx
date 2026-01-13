@@ -136,13 +136,15 @@ const LoginForm = ({ showPassword, togglePassword, setIsSignUp, navigate }) => {
             ></span>
           </div>
 
-          {/* Butonul Google */}
+          {/* Butonul Google , aici am modificat*/}
           <div
             style={{
               width: "100%",
               height: "42px",
-              borderRadius: "20px",
-              overflow: "hidden",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: "6px",
             }}
           >
             <GoogleLogin

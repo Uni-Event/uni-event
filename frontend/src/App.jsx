@@ -7,6 +7,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import AuthPage from "./pages/AuthPage";
 import DashboardWrapper from "./pages/DashboardWrapper";
 import OrganizerDashboardPage from "./pages/OrganizerDashboardPage";
+import FavoritesPage from "./pages/FavoritesPage";
 
 function Logout() {
   localStorage.clear();
@@ -32,6 +33,15 @@ function App() {
               <DashboardWrapper />
             </ProtectedRoute>
           } 
+        />
+
+        <Route
+          path="/favorites"
+          element={
+            <ProtectedRoute>
+              <FavoritesPage />
+            </ProtectedRoute>
+          }
         />
 
         <Route 

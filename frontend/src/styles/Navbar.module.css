@@ -1,17 +1,17 @@
-/* Importam fontul modern 'Inter' */
+/* Importam fontul 'Inter' */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* --- NAVBAR (Fix Sus) --- */
 .navbar {
-  background-color: #ffffff; /* Alb pur pentru modernitate */
-  border-bottom: 1px solid #f0f0f0; /* Border mai subtil */
+  background-color: #ffffff; 
+  border-bottom: 2px solid #f0f0f0; 
   width: 100%;
   flex-shrink: 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  font-family: 'Inter', sans-serif; /* Aplicam fontul nou */
-  height: 72px; /* Putin mai inalt pentru aerisire */
+  font-family: 'Inter', sans-serif;
+  height: 65px;
 }
 
 .container {
@@ -20,7 +20,7 @@
   align-items: center;
   padding: 0 40px;
   height: 100%;
-  max-width: 1280px; /* Max width standard */
+  max-width: 1280px; 
   margin: 0 auto;
 }
 
@@ -34,26 +34,26 @@
   font-weight: 800;
   font-size: 1.6rem;
   text-decoration: none;
-  letter-spacing: -0.5px; /* Tracking mai strans pentru look modern */
+  letter-spacing: -0.5px; 
 }
 
 /* Partea dreaptă */
 .navRight {
   display: flex;
   align-items: center;
-  gap: 40px; /* Spatiere mai mare intre sectiuni */
+  gap: 10px;
 }
 
 /* Link-uri */
 .navLinks {
   display: flex;
-  gap: 8px; /* Gap mic intre butoane, folosim padding */
+  gap: 8px;
   align-items: center;
 }
 
 .navLink {
   color: #666;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 500;
   text-decoration: none;
   padding: 10px 16px;
@@ -63,12 +63,12 @@
 
 .navLink:hover {
   color: #8a56d1;
-  background-color: #f9f5ff; /* Mov foarte pal */
+  background-color: #f9f5ff; 
 }
 
 /* --- PROFIL & DROPDOWN --- */
 .profileContainer {
-  position: relative; /* Necesar pentru dropdown absolut */
+  position: relative; 
   height: 100%;
   display: flex;
   align-items: center;
@@ -93,15 +93,15 @@
 
 /* Avatarul */
 .avatar {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-color: #e0e0e0;
   background-size: cover;
   background-position: center;
   flex-shrink: 0;
-  border: 2px solid #fff; /* Inel alb */
-  box-shadow: 0 2px 5px rgba(0,0,0,0.08); /* Umbra fina */
+  border: 2px solid #fff; 
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
 }
 
 .profileInfo {
@@ -119,14 +119,14 @@
 
 .username {
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   color: #1a1a1a;
 }
 
-/* --- DROPDOWN MENU (Elegant) --- */
+/* --- DROPDOWN MENU --- */
 .dropdownMenu {
   position: absolute;
-  top: 120%; /* Putin sub navbar */
+  top: 120%; 
   right: 0;
   width: 220px;
   background: white;
@@ -159,7 +159,7 @@
 .profileContainer:hover .dropdownMenu {
   opacity: 1;
   visibility: visible;
-  top: 100%; /* Se apropie putin */
+  top: 100%; 
   transform: translateY(10px);
 }
 

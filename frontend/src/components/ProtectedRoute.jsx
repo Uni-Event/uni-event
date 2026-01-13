@@ -25,6 +25,7 @@ function ProtectedRoute({ children, requiredRole }) {
 
     useEffect(() => {
         auth().catch(() => setIsAuthorized(false));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const refreshToken = async () => {

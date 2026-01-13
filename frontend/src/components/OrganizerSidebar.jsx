@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { FaPlus, FaGlobe, FaTasks, FaChartPie, FaSignOutAlt } from 'react-icons/fa';
+import { BsQrCodeScan } from "react-icons/bs";
 import styles from '../styles/Sidebar.module.css';
 
 const OrganizerSidebar = ({ onOpenCreate }) => {
