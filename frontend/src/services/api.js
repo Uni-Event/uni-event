@@ -32,4 +32,22 @@ api.interceptors.request.use(
   }
 )
 
+// VALENTIN - 14.12.2025 
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      console.warn("Sesiune expirată sau utilizator invalid. Delogare automată...");
+      
+      localStorage.clear();
+
+      window.location.href = "/auth";
+    }
+    
+    return Promise.reject(error);
+  }
+);
+
 export default api;

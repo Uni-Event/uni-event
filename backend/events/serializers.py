@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from .models import Faculty, Department, Category, Location, Event
 from users.serializers import UserSerializer
+from django.utils import timezone
 
 class FacultySerializer(serializers.ModelSerializer):
     class Meta:
         model = Faculty
         fields = ["id", "name", "abbreviation"]
-
 
 class DepartmentSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(read_only=True)
@@ -131,6 +131,58 @@ class EventCreateSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+    def validate(self, attrs):
+        status = attrs.get("status") or "draft"
+
+        title = (attrs.get("title") or "").strip()
+        description = (attrs.get("description") or "").strip()
+
+        start_date = attrs.get("start_date")
+        end_date = attrs.get("end_date")
+        max_participants = attrs.get("max_participants")
+
+        location_name = (attrs.get("location_name") or "").strip()
+        location_address = (attrs.get("location_address") or "").strip()
+
+        errors = {}
+
+        if max_participants is not None and max_participants < 1:
+            errors["max_participants"] = "Numărul de participanți trebuie să fie cel puțin 1."
+
+        if status == "pending":
+            if len(title) < 5:
+                errors["title"] = "Titlul trebuie să aibă cel puțin 5 caractere."
+
+            if len(description) < 5:
+                errors["description"] = "Descrierea trebuie să aibă cel puțin 5 caractere."
+
+            if not attrs.get("category"):
+                errors["category"] = "Categoria este obligatorie pentru trimitere la validare."
+
+            if not location_name:
+                errors["location_name"] = "Numele locației este obligatoriu."
+
+            if not location_address:
+                errors["location_address"] = "Adresa locației este obligatorie pentru trimitere la validare."
+
+            if start_date is None:
+                errors["start_date"] = "Data de început este obligatorie."
+            else:
+                if start_date < timezone.now():
+                    errors["start_date"] = "Data de început nu poate fi în trecut."
+
+            if end_date is None:
+                errors["end_date"] = "Data de sfârșit este obligatorie."
+            elif start_date is not None and end_date <= start_date:
+                errors["end_date"] = "Data de sfârșit trebuie să fie după data de început."
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        return attrs
+
+
     def create(self, validated_data):
         # 1. Extragem datele despre locatie din request
         loc_name = validated_data.pop('location_name')
