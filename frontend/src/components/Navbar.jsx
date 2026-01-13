@@ -1,106 +1,158 @@
-import React, { useMemo, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../services/api";
 import {
   FaBars,
   FaTimes,
   FaSignOutAlt,
   FaUser,
   FaTicketAlt,
-  FaHeart,
-  FaChartBar,
-  FaClipboardList,
+  FaCalendarAlt,
 } from "react-icons/fa";
-import { BsQrCodeScan } from "react-icons/bs";
 import { jwtDecode } from "jwt-decode";
 import styles from "../styles/Navbar.module.css";
 import { ACCESS_TOKEN } from "../constants";
+import logo from "../assets/logo-UniEvent.png";
 
 function Navbar() {
-  // State & Navigation
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [notificationCount, setNotificationCount] = useState(0);
+
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  // Auth: token din storage
-  const token = localStorage.getItem(ACCESS_TOKEN);
+  // Închide dropdown-ul la click în exterior
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsNotificationsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-  // Decode user din token 
-  const user = useMemo(() => {
-    const decoded = jwtDecode(token);
-    const displayName = decoded.full_name || decoded.email || "Utilizator";
+  // Preluăm biletele și filtrăm pentru ziua de mâine
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await api.get("/api/interactions/tickets/");
+        const tickets = res.data;
 
-    return {
-      name: displayName,
-      email: decoded.email || "",
-      isOrganizer: Boolean(decoded.is_organizer),
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
+        const filtered = tickets.filter((ticket) => {
+          const eventDate = ticket.event_details?.start_date;
+          return eventDate && eventDate.startsWith(tomorrowStr);
+        });
+
+        setUpcomingEvents(filtered);
+        setNotificationCount(filtered.length);
+      } catch (err) {
+        console.error("Eroare la preluarea notificărilor:", err);
+      }
     };
-  }, [token]);
 
-  // Role flags
-  const isOrganizer = user.isOrganizer;
+    if (localStorage.getItem(ACCESS_TOKEN)) {
+      fetchNotifications();
+    }
+  }, []);
 
-  // UI Helpers
-  const toggleMobileMenu = () => setIsMobileMenuOpen((v) => !v);
-  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+  const [user] = useState(() => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    const defaultUser = { name: "Vizitator", email: "" };
 
-  const handleLogout = () => {
-    closeMobileMenu();
-    navigate("/logout");
-  };
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        return {
+          name: decoded.full_name || decoded.email || "Utilizator",
+          email: decoded.email,
+        };
+      } catch {
+        return defaultUser;
+      }
+    }
+    return defaultUser;
+  });
 
-  // Avatar generat din nume (ui-avatars)
+  const handleLogout = () => navigate("/logout");
+
   const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(
     user.name
   )}&background=8a56d1&color=fff&size=128&bold=true`;
 
-  // Link-uri comune (pentru ambele roluri)
-  const navLinks = [
-    { to: "/", label: "Acasă" },
-    { to: "/", label: "Notificări" },
-  ];
-
-  // Link-uri specifice rolului
-  const roleMenuItems = useMemo(() => {
-    if (isOrganizer) {
-      return [
-        { to: "/organizer/dashboard", label: "Gestiune", icon: <FaClipboardList /> },
-        { to: "/organizer/stats", label: "Statistici", icon: <FaChartBar /> },
-        { to: "/organizer/scan", label: "Scanare Bilete", icon: <BsQrCodeScan /> },
-      ];
-    }
-
-    // student (default)
-    return [
-      { to: "/favorites", label: "Favorite", icon: <FaHeart /> },
-      { to: "/my-tickets", label: "Biletele Mele", icon: <FaTicketAlt /> },
-    ];
-  }, [isOrganizer]);
-
-  if (!token) return null;
-
   return (
     <>
-      {/* NAVBAR (Desktop) */}
       <nav className={styles.navbar}>
         <div className={styles.container}>
-          {/* Logo */}
           <div className={styles.navLogo}>
-            <Link to="/" className={styles.logoLink}>
-              UniEvent
+            <Link to="/" className={styles.logoLink} aria-label="UniEvent">
+              <img src={logo} alt="UniEvent" className={styles.navbarLogo} />
             </Link>
           </div>
 
-          {/* Right side */}
           <div className={styles.navRight}>
-            {/* Link-uri comune */}
             <div className={styles.navLinks}>
-              {navLinks.map((link) => (
-                <Link key={link.to} to={link.to} className={styles.navLink}>
-                  {link.label}
-                </Link>
-              ))}
+              <Link to="/" className={styles.navLink}>
+                Acasă
+              </Link>
+
+              {/* Dropdown Notificări */}
+              <div className={styles.notificationWrapper} ref={dropdownRef}>
+                <div
+                  className={styles.navLink}
+                  onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                  style={{ cursor: "pointer", position: "relative" }}
+                >
+                  Notificări
+                  {notificationCount > 0 && (
+                    <span className={styles.redDot}></span>
+                  )}
+                </div>
+
+                {isNotificationsOpen && (
+                  <div className={styles.notificationDropdown}>
+                    <div className={styles.dropdownHeader}>
+                      EVENIMENTE MÂINE
+                    </div>
+                    <div className={styles.dropdownContentScroll}>
+                      {upcomingEvents.length > 0 ? (
+                        upcomingEvents.map((ticket, index) => (
+                          <div key={index} className={styles.notificationItem}>
+                            <FaCalendarAlt className={styles.notifIcon} />
+                            <div className={styles.notifText}>
+                              <p className={styles.notifTitle}>
+                                {ticket.event_details.title}
+                              </p>
+                              <span className={styles.notifLabel}>
+                                Începe la{" "}
+                                {new Date(
+                                  ticket.event_details.start_date
+                                ).toLocaleTimeString([], {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className={styles.emptyNotif}>
+                          Nu ai bilete pentru mâine.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Profil + Dropdown */}
+            {/* Profil Container */}
             <div className={styles.profileContainer}>
               <div className={styles.profileSection}>
                 <div
@@ -114,53 +166,27 @@ function Navbar() {
               </div>
 
               <div className={styles.dropdownMenu}>
-                {/* Email */}
-                <div
-                  className={styles.dropdownItem}
-                  style={{
-                    pointerEvents: "none",
-                    fontSize: "0.8rem",
-                    color: "#999",
-                  }}
-                >
-                  {user.email}
-                </div>
-
-                <div className={styles.divider} />
-
-                {/* Role items */}
-                {roleMenuItems.map((item) => (
-                  <Link key={item.to} to={item.to} className={styles.dropdownItem}>
-                    {item.icon} {item.label}
-                  </Link>
-                ))}
-
-                <div className={styles.divider} />
-
-                {/* Profil */}
+                <div className={styles.emailDisplay}>{user.email}</div>
+                <div className={styles.divider}></div>
+                <Link to="/my-tickets" className={styles.dropdownItem}>
+                  <FaTicketAlt /> Biletele Mele
+                </Link>
                 <Link to="/profile" className={styles.dropdownItem}>
                   <FaUser /> Profil
                 </Link>
-
-                <div className={styles.divider} />
-
-                {/* Logout */}
+                <div className={styles.divider}></div>
                 <button
                   onClick={handleLogout}
                   className={`${styles.dropdownItem} ${styles.danger}`}
-                  type="button"
                 >
                   <FaSignOutAlt /> Deconectare
                 </button>
               </div>
             </div>
 
-            {/* Hamburger (Mobil) */}
             <button
               className={styles.menuToggle}
-              onClick={toggleMobileMenu}
-              type="button"
-              aria-label="Deschide meniul"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
             </button>
@@ -168,54 +194,41 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* MENIU MOBIL */}
-      <div className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.active : ""}`}>
+      {/* Meniul Mobil */}
+      <div
+        className={`${styles.mobileMenu} ${
+          isMobileMenuOpen ? styles.active : ""
+        }`}
+      >
         <div className={styles.mobileProfile}>
           <div
             className={styles.mobileAvatar}
             style={{ backgroundImage: `url(${avatarUrl})` }}
           />
           <div className={styles.mobileUserInfo}>
-            <span className={styles.mobileGreeting}>Salut,</span>
             <span className={styles.mobileUsername}>{user.name}</span>
           </div>
         </div>
-
-        {navLinks.map((link) => (
-          <Link
-            key={link.to}
-            to={link.to}
-            className={styles.mobileLink}
-            onClick={closeMobileMenu}
-          >
-            {link.label}
-          </Link>
-        ))}
-
-        {roleMenuItems.map((item) => (
-          <Link
-            key={item.to}
-            to={item.to}
-            className={styles.mobileLink}
-            onClick={closeMobileMenu}
-          >
-            <span style={{ marginRight: "10px" }}>{item.icon}</span>
-            {item.label}
-          </Link>
-        ))}
-
-        <Link to="/profile" className={styles.mobileLink} onClick={closeMobileMenu}>
-          <FaUser style={{ marginRight: "10px" }} />
-          Profil
+        <Link
+          to="/"
+          className={styles.mobileLink}
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          Acasă
         </Link>
-
+        <Link
+          to="/my-tickets"
+          className={styles.mobileLink}
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          Biletele Mele
+        </Link>
         <div
           className={styles.mobileLink}
           onClick={handleLogout}
-          style={{ color: "#d32f2f" }}
+          style={{ color: "#ff4d4d" }}
         >
-          <FaSignOutAlt style={{ marginRight: "10px" }} />
-          Deconectare
+          <FaSignOutAlt style={{ marginRight: "10px" }} /> Deconectare
         </div>
       </div>
     </>

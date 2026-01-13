@@ -1,17 +1,17 @@
-/* Importam fontul 'Inter' */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* Importam fontul modern 'Inter' */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 /* --- NAVBAR (Fix Sus) --- */
 .navbar {
-  background-color: #ffffff; 
-  border-bottom: 2px solid #f0f0f0; 
+  background-color: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
   width: 100%;
   flex-shrink: 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  font-family: 'Inter', sans-serif;
-  height: 65px;
+  font-family: "Inter", sans-serif;
+  height: 72px;
 }
 
 .container {
@@ -20,7 +20,7 @@
   align-items: center;
   padding: 0 40px;
   height: 100%;
-  max-width: 1280px; 
+  max-width: 1280px;
   margin: 0 auto;
 }
 
@@ -29,19 +29,20 @@
   flex: 0 0 auto;
 }
 
+/* (lăsat cum era pentru text, dar override mai jos pentru img) */
 .logoLink {
   color: #8a56d1;
   font-weight: 800;
   font-size: 1.6rem;
   text-decoration: none;
-  letter-spacing: -0.5px; 
+  letter-spacing: -0.5px;
 }
 
 /* Partea dreaptă */
 .navRight {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 40px;
 }
 
 /* Link-uri */
@@ -53,7 +54,7 @@
 
 .navLink {
   color: #666;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 500;
   text-decoration: none;
   padding: 10px 16px;
@@ -63,12 +64,12 @@
 
 .navLink:hover {
   color: #8a56d1;
-  background-color: #f9f5ff; 
+  background-color: #f9f5ff;
 }
 
 /* --- PROFIL & DROPDOWN --- */
 .profileContainer {
-  position: relative; 
+  position: relative;
   height: 100%;
   display: flex;
   align-items: center;
@@ -79,36 +80,34 @@
   align-items: center;
   gap: 12px;
   padding: 6px 12px;
-  border-radius: 50px; /* Pill shape */
+  border-radius: 50px;
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid transparent;
 }
 
-/* Efect de hover pe tot containerul profilului */
 .profileSection:hover {
   background-color: #f8f9fa;
   border-color: #eee;
 }
 
-/* Avatarul */
 .avatar {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background-color: #e0e0e0;
   background-size: cover;
   background-position: center;
   flex-shrink: 0;
-  border: 2px solid #fff; 
-  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+  border: 2px solid #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
 }
 
 .profileInfo {
   display: flex;
   flex-direction: column;
   line-height: 1.3;
-  align-items: flex-start; /* ALINIERE LA STANGA (START) */
+  align-items: flex-start;
 }
 
 .greeting {
@@ -119,34 +118,40 @@
 
 .username {
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: #1a1a1a;
 }
 
-/* --- DROPDOWN MENU --- */
+/* --- DROPDOWN MENU (FIXAT: nu mai iese din frame) --- */
 .dropdownMenu {
   position: absolute;
-  top: 120%; 
-  right: 0;
-  width: 220px;
+  top: calc(100% + 10px);
+  right: 0; /* ANCORARE la dreapta */
+  left: auto;
+
+  width: 260px; /* puțin mai lat ca să intre emailul */
+  max-width: min(260px, calc(100vw - 24px)); /* nu depășește viewport-ul */
+  overflow: hidden; /* nu mai “iese” nimic */
+
   background: white;
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   border: 1px solid #eee;
   padding: 8px;
+
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-10px);
+  transform: translateY(10px);
   transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
   z-index: 1001;
 }
 
-/* Triunghi mic sus (Sageata) */
+/* Triunghi mic sus */
 .dropdownMenu::before {
   content: "";
   position: absolute;
   top: -6px;
-  right: 20px;
+  right: 22px;
   width: 12px;
   height: 12px;
   background: white;
@@ -155,20 +160,36 @@
   border-top: 1px solid #eee;
 }
 
-/* Afisare la hover pe parinte (.profileContainer) */
+/* Afisare la hover */
 .profileContainer:hover .dropdownMenu {
   opacity: 1;
   visibility: visible;
-  top: 100%; 
-  transform: translateY(10px);
+  transform: translateY(0);
 }
 
+/* Email: să nu “spargă” dropdown-ul */
+.emailDisplay {
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  color: #333;
+  font-weight: 600;
+
+  white-space: normal; /* permite wrap */
+  overflow-wrap: anywhere; /* rupe la nevoie */
+  word-break: break-word;
+
+  border-radius: 10px;
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+}
+
+/* Item-urile să rămână în interior */
 .dropdownItem {
   display: flex;
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 12px 15px;
+  padding: 12px 12px; /* padding uniform */
   border: none;
   background: none;
   text-align: left;
@@ -177,9 +198,11 @@
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.2s;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 500;
   text-decoration: none;
+
+  box-sizing: border-box; /* nu mai depășește */
 }
 
 .dropdownItem:hover {
@@ -187,9 +210,13 @@
   color: #8a56d1;
 }
 
-.dropdownItem.danger:hover {
-  background-color: #fff0f0;
-  color: #d32f2f;
+.danger {
+  color: #d32f2f !important;
+}
+
+.danger:hover {
+  background-color: #fff0f0 !important;
+  color: #d32f2f !important;
 }
 
 /* Separator */
@@ -199,7 +226,7 @@
   margin: 6px 0;
 }
 
-/* BUTON HAMBURGER - ASCUNS PE DESKTOP */
+/* BUTON HAMBURGER */
 .menuToggle {
   display: none;
   background: none;
@@ -212,71 +239,136 @@
 
 /* ===== RESPONSIVE ===== */
 @media screen and (max-width: 768px) {
-  .navLinks, .profileContainer { /* Ascundem containerul cu dropdown pe mobil */
+  .navLinks,
+  .profileContainer {
     display: none;
   }
-  
+
   .menuToggle {
     display: block;
   }
 }
 
-/* ... Stilurile pentru Mobile Menu raman la fel sau se pot adapta ... */
+/* Meniu Mobil */
 .mobileMenu {
-    position: fixed;
-    top: 72px;
-    left: 0;
-    width: 100%;
-    height: calc(100vh - 72px);
-    background: white;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    z-index: 998;
-    box-shadow: -5px 0 15px rgba(0,0,0,0.05);
+  position: fixed;
+  top: 72px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 72px);
+  background: white;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  z-index: 998;
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
 }
 
 .mobileMenu.active {
-    transform: translateX(0);
+  transform: translateX(0);
 }
 
 .mobileProfile {
-    padding: 30px 20px;
-    background: #f9f9f9;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    align-items: center;
-    gap: 15px;
+  padding: 30px 20px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 .mobileAvatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-size: cover;
-    border: 2px solid white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-size: cover;
+  border: 2px solid white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .mobileUserInfo {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .mobileUsername {
-    font-weight: 700;
-    color: #333;
+  font-weight: 700;
+  color: #333;
 }
+
 .mobileGreeting {
-    font-size: 0.8rem;
-    color: #666;
+  font-size: 0.8rem;
+  color: #666;
 }
 
 .mobileLink {
-    padding: 15px 25px;
-    text-decoration: none;
-    color: #333;
-    font-weight: 600;
-    border-bottom: 1px solid #f5f5f5;
+  padding: 15px 25px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 600;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+/* =========================
+   LOGO (img) în navbar
+   ========================= */
+
+.navLogo {
+  height: 72px;
+  display: flex;
+  align-items: center;
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  text-decoration: none;
+  padding: 0;
+}
+
+/* imaginea logo - FIX: încadrat în navbar */
+.navbarLogo {
+  height: 200px; /* <<< IMPORTANT (nu 200px) */
+  width: auto;
+  max-width: 190px;
+  object-fit: contain;
+  display: block;
+
+  animation: navbarLogoFloat 4.6s ease-in-out infinite;
+  filter: drop-shadow(0 10px 20px rgba(138, 86, 209, 0.22));
+  transform: translateZ(0);
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.logoLink:hover .navbarLogo {
+  transform: translateY(-2px) scale(1.02);
+  filter: drop-shadow(0 14px 26px rgba(138, 86, 209, 0.32));
+}
+
+@keyframes navbarLogoFloat {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbarLogo {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .navbarLogo {
+    height: 150px;
+    max-width: 160px;
+  }
 }
