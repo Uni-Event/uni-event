@@ -14,14 +14,16 @@ const AuthPage = () => {
   const togglePassword = () => setShowPassword(!showPassword);
 
   return (
-    <div className="auth-scope"> 
+    <div className="auth-scope">
       <div className={`container ${isSignUp ? "right-panel-active" : ""}`}>
+        {/* Partea de Register */}
         <RegisterForm
           showPassword={showPassword}
           togglePassword={togglePassword}
           setIsSignUp={setIsSignUp}
         />
 
+        {/* Partea de Login */}
         <LoginForm
           showPassword={showPassword}
           togglePassword={togglePassword}
@@ -29,7 +31,8 @@ const AuthPage = () => {
           navigate={navigate}
         />
 
-        <AuthOverlay />
+        {/* Overlay-ul animat (Logo + Switcher) */}
+        <AuthOverlay isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
       </div>
     </div>
   );

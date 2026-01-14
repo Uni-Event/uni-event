@@ -14,31 +14,35 @@ import { BsQrCodeScan } from "react-icons/bs";
 import { jwtDecode } from "jwt-decode";
 import styles from "../styles/Navbar.module.css";
 import { ACCESS_TOKEN } from "../constants";
+import logo from "../assets/logo-UniEvent.png";
 
 function Navbar() {
-  // State & Navigation
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Auth: token din storage
   const token = localStorage.getItem(ACCESS_TOKEN);
 
-  // Decode user din token 
+  // Decode user din token (safe)
   const user = useMemo(() => {
-    const decoded = jwtDecode(token);
-    const displayName = decoded.full_name || decoded.email || "Utilizator";
+    const fallback = { name: "Utilizator", email: "", isOrganizer: false };
+    if (!token) return fallback;
 
-    return {
-      name: displayName,
-      email: decoded.email || "",
-      isOrganizer: Boolean(decoded.is_organizer),
-    };
+    try {
+      const decoded = jwtDecode(token);
+      const displayName = decoded.full_name || decoded.email || "Utilizator";
+
+      return {
+        name: displayName,
+        email: decoded.email || "",
+        isOrganizer: Boolean(decoded.is_organizer),
+      };
+    } catch {
+      return fallback;
+    }
   }, [token]);
 
-  // Role flags
   const isOrganizer = user.isOrganizer;
 
-  // UI Helpers
   const toggleMobileMenu = () => setIsMobileMenuOpen((v) => !v);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
@@ -47,12 +51,11 @@ function Navbar() {
     navigate("/logout");
   };
 
-  // Avatar generat din nume (ui-avatars)
   const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(
     user.name
   )}&background=8a56d1&color=fff&size=128&bold=true`;
 
-  // Link-uri comune (pentru ambele roluri)
+  // Link-uri comune
   const navLinks = [
     { to: "/", label: "Acasă" },
     { to: "/", label: "Notificări" },
@@ -68,7 +71,6 @@ function Navbar() {
       ];
     }
 
-    // student (default)
     return [
       { to: "/favorites", label: "Favorite", icon: <FaHeart /> },
       { to: "/my-tickets", label: "Biletele Mele", icon: <FaTicketAlt /> },
@@ -82,10 +84,10 @@ function Navbar() {
       {/* NAVBAR (Desktop) */}
       <nav className={styles.navbar}>
         <div className={styles.container}>
-          {/* Logo */}
+          {/* Logo (IMAGINE) */}
           <div className={styles.navLogo}>
-            <Link to="/" className={styles.logoLink}>
-              UniEvent
+            <Link to="/" className={styles.logoLink} aria-label="UniEvent">
+              <img src={logo} alt="UniEvent" className={styles.navbarLogo} />
             </Link>
           </div>
 
@@ -94,7 +96,11 @@ function Navbar() {
             {/* Link-uri comune */}
             <div className={styles.navLinks}>
               {navLinks.map((link) => (
-                <Link key={link.to} to={link.to} className={styles.navLink}>
+                <Link
+                  key={`${link.to}-${link.label}`}  // evita key duplicat
+                  to={link.to}
+                  className={styles.navLink}
+                >
                   {link.label}
                 </Link>
               ))}
@@ -183,7 +189,7 @@ function Navbar() {
 
         {navLinks.map((link) => (
           <Link
-            key={link.to}
+            key={`${link.to}-${link.label}-m`}
             to={link.to}
             className={styles.mobileLink}
             onClick={closeMobileMenu}
