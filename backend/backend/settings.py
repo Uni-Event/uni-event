@@ -15,6 +15,7 @@ from pathlib import Path
 from datetime import timedelta # 29.11.25 For setting token expiration times
 from dotenv import load_dotenv # 29.11.25 For loading environment variables from a .env file
 import os                      # 29.11.25 For accessing environment variables
+from urllib.parse import urlparse, parse_qsl
 
 load_dotenv()                  # 29.11.25 Load environment variables from a .env file if present
 
@@ -114,10 +115,20 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': tmpPostgres.path.replace('/', ''),
+        'USER': tmpPostgres.username,
+        'PASSWORD': tmpPostgres.password,
+        'HOST': tmpPostgres.hostname,
+        'PORT': 5432,
+        'OPTIONS': dict(parse_qsl(tmpPostgres.query)),
     }
 }
 
