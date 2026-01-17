@@ -11,11 +11,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from urllib.parse import urlparse, parse_qsl
 
 from datetime import timedelta # 29.11.25 For setting token expiration times
 from dotenv import load_dotenv # 29.11.25 For loading environment variables from a .env file
 import os                      # 29.11.25 For accessing environment variables
-from urllib.parse import urlparse, parse_qsl
 
 load_dotenv()                  # 29.11.25 Load environment variables from a .env file if present
 
@@ -32,7 +32,17 @@ SECRET_KEY = 'django-insecure-xk%$r+1!8c1pqs)(4rm9e)gl6k4fvs1y#mh3=us+0yu@aoz@px
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = ["*"] # 29.11.25 Set to allow all hosts for development purposes.
+ALLOWED_HOSTS = ["*"] # 29.11.25 Set to allow all hosts for development purposes.
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
+
+# CSRF: permite origin-urile (frontend + backend)
+CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
 
 # 29.11.25 Django REST Framework configuration
 REST_FRAMEWORK = {
@@ -112,19 +122,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
-# Render settings for handling secure proxy headers
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
-RENDER_HOST = os.getenv("RENDER_EXTERNAL_HOSTNAME")  # ex: uni-event-backend.onrender.com
-
-CSRF_TRUSTED_ORIGINS = []
-if RENDER_HOST:
-    CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_HOST}")
-
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
-if RENDER_HOST:
-    ALLOWED_HOSTS = [RENDER_HOST]
-
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
@@ -187,17 +184,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-CORS_ALLOW_ALL_ORIGINS = False
-
-CORS_ALLOWED_ORIGINS = [
-    "https://<frontend>.onrender.com",
-    # opțional local dev:
-    "http://localhost:5173",
-]                                       # 29.11.25 Allow all origins for CORS (development only)
-CORS_ALLOW_CREDENTIALS = True           # 29.11.25 Allow cookies to be included in cross-site HTTP requests
+CORS_ALLOW_ALL_ORIGINS = True           # 29.11.25 Allow all origins for CORS (development only)
+CORS_ALLOW_CREDENTIALS = True          # 29.11.25 Allow cookies to be included in cross-site HTTP requests
 AUTH_USER_MODEL = 'users.CustomUser'    # 29.11.25 Use custom user model
-
 
 # 15.12.25 Media files settings
 MEDIA_URL = '/media/'
