@@ -18,6 +18,9 @@ function OrganizerScanPage() {
   const [statusMsg, setStatusMsg] = useState("");
   const [lastResult, setLastResult] = useState(null);
 
+  const [busy] = useState(false);
+
+
   const API_BASE_URL =
     import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
@@ -32,7 +35,7 @@ function OrganizerScanPage() {
       if (!clean.startsWith("/media")) return `${API_BASE_URL}/media${clean}`;
       return `${API_BASE_URL}${clean}`;
     },
-    [API_BASE_URL]
+    [API_BASE_URL],
   );
 
   const fetchMyEvents = useCallback(async () => {
@@ -61,17 +64,17 @@ function OrganizerScanPage() {
       const start = ev?.start_date ? new Date(ev.start_date) : null;
       const end = ev?.end_date ? new Date(ev.end_date) : null;
 
-      const isEnded = end ? end < now : false; 
+      const isEnded = end ? end < now : false;
       const isUpcoming = start ? start > now : false;
       const isOngoing = start ? start <= now && !isEnded : !isEnded;
 
       const state = isEnded
         ? "ended"
         : isUpcoming
-        ? "upcoming"
-        : isOngoing
-        ? "ongoing"
-        : "upcoming";
+          ? "upcoming"
+          : isOngoing
+            ? "ongoing"
+            : "upcoming";
 
       return {
         ...ev,
@@ -92,7 +95,6 @@ function OrganizerScanPage() {
   };
 
   const handleDecode = async (qrText) => {
-
     const res = await api.post("/api/interactions/tickets/checkin/", {
       event_id: selectedEvent.id,
       qr_code_data: qrText,
@@ -122,6 +124,7 @@ function OrganizerScanPage() {
 
             <QrScanner
               active={true}
+              disabled={busy}
               onStatus={setStatusMsg}
               onDecode={handleDecode}
             />

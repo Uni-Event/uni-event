@@ -1,13 +1,29 @@
 import React, { useEffect, useId, useRef } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 
-export default function QrScanner({ active, onDecode, onStatus }) {
+export default function QrScanner({ active, onDecode, onStatus, disabled }) {
   const reactId = useId();
-  const mountId = `qr-${reactId.replace(/:/g, "")}`; 
+  const mountId = `qr-${reactId.replace(/:/g, "")}`;
 
   const qrRef = useRef(null);
+
+  const onDecodeRef = useRef(onDecode);
+  const onStatusRef = useRef(onStatus);
+  const disabledRef = useRef(Boolean(disabled));
+
   const lastTextRef = useRef("");
   const lastAtRef = useRef(0);
+
+  // ținem ultimele callback-uri fără să repornim camera
+  useEffect(() => {
+    onDecodeRef.current = onDecode;
+  }, [onDecode]);
+  useEffect(() => {
+    onStatusRef.current = onStatus;
+  }, [onStatus]);
+  useEffect(() => {
+    disabledRef.current = Boolean(disabled);
+  }, [disabled]);
 
   useEffect(() => {
     let cancelled = false;
@@ -15,7 +31,7 @@ export default function QrScanner({ active, onDecode, onStatus }) {
     const start = async () => {
       if (!active) return;
 
-      onStatus?.("Pornesc camera...");
+      onStatusRef.current?.("Pornesc camera...");
       const qr = new Html5Qrcode(mountId);
       qrRef.current = qr;
 
@@ -24,27 +40,28 @@ export default function QrScanner({ active, onDecode, onStatus }) {
           { facingMode: "environment" },
           { fps: 10, qrbox: { width: 260, height: 260 } },
           (decodedText) => {
-            const now = Date.now();
+            if (disabledRef.current) return; // nu opri camera, doar ignoră scanările cât e busy
 
+            const now = Date.now();
             if (
               decodedText === lastTextRef.current &&
               now - lastAtRef.current < 1200
-            ) {
+            )
               return;
-            }
 
             lastTextRef.current = decodedText;
             lastAtRef.current = now;
 
-            onDecode?.(decodedText);
+            onDecodeRef.current?.(decodedText);
           },
           () => {},
         );
 
-        if (!cancelled) onStatus?.("Camera pornită. Scanează QR-ul...");
+        if (!cancelled)
+          onStatusRef.current?.("Camera pornită. Scanează QR-ul...");
       } catch (e) {
         console.error(e);
-        onStatus?.("Nu pot porni camera. Verifică permisiunile.");
+        onStatusRef.current?.("Nu pot porni camera. Verifică permisiunile.");
       }
     };
 
@@ -67,12 +84,11 @@ export default function QrScanner({ active, onDecode, onStatus }) {
     };
 
     start();
-
     return () => {
       cancelled = true;
       stop();
     };
-  }, [active, mountId, onDecode, onStatus]);
+  }, [active, mountId]);
 
   return (
     <div style={{ width: "100%", maxWidth: 420 }}>
