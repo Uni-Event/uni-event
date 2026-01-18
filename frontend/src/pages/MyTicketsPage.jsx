@@ -48,13 +48,10 @@ function MyTicketsPage() {
     const end = ev?.end_date ? new Date(ev.end_date) : null;
     const now = new Date();
 
-    const isChecked = Boolean(ticket?.is_checked_in);
     const isExpired = end ? end < now : false;
 
-    if (isChecked || isExpired) {
-      setError(
-        isChecked ? "Biletul este deja validat." : "Evenimentul s-a terminat."
-      );
+    if (isExpired) {
+      setError("Evenimentul s-a terminat.");
       return;
     }
 
@@ -83,8 +80,8 @@ function MyTicketsPage() {
 
     setTickets((prev) =>
       (prev || []).map((t) =>
-        (t?.event?.id ?? t?.event) === evId ? { ...t, has_review: true } : t
-      )
+        (t?.event?.id ?? t?.event) === evId ? { ...t, has_review: true } : t,
+      ),
     );
   };
 
@@ -130,7 +127,7 @@ function MyTicketsPage() {
     try {
       await api.delete(`/api/interactions/tickets/${ticketId}/`);
       setTickets((prev) =>
-        (prev || []).filter((t) => String(t.id) !== String(ticketId))
+        (prev || []).filter((t) => String(t.id) !== String(ticketId)),
       );
 
       if (String(expandedId) === String(ticketId)) setExpandedId(null);
@@ -178,7 +175,7 @@ function MyTicketsPage() {
                       expanded={String(expandedId) === String(t.id)}
                       onToggle={() =>
                         setExpandedId((prev) =>
-                          String(prev) === String(t.id) ? null : t.id
+                          String(prev) === String(t.id) ? null : t.id,
                         )
                       }
                       onViewQr={(ticketObj) => openQr(ticketObj)}
@@ -206,7 +203,7 @@ function MyTicketsPage() {
                       expanded={String(expandedId) === String(t.id)}
                       onToggle={() =>
                         setExpandedId((prev) =>
-                          String(prev) === String(t.id) ? null : t.id
+                          String(prev) === String(t.id) ? null : t.id,
                         )
                       }
                       onCancel={() => handleCancel(t.id)}
