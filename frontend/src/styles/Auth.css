@@ -599,7 +599,7 @@
     display: none;
   }
 
-  /* ✅ FIX CRITIC: ascundem complet overlay-ul pe mobil */
+  /* FIX CRITIC: ascundem complet overlay-ul pe mobil */
   .auth-scope .overlay-container {
     display: none !important;
   }
@@ -607,7 +607,7 @@
     display: none !important;
   }
 
-  /* ✅ FIX: form container devine full width */
+  /* FIX: form container devine full width */
   .auth-scope .form-container {
     position: relative !important;
     width: 100% !important;

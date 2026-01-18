@@ -44,3 +44,38 @@
   grid-template-columns: 1fr;
   gap: 14px;
 }
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 14px;
+  margin-bottom: 10px;
+
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+
+  color: #111;
+  font-weight: 800;
+  font-size: 0.95rem;
+
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.backBtn:hover {
+  background: #fafafa;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+}
+
+.backBtn:active {
+  transform: scale(0.98);
+}
+
+.backBtn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(138, 86, 209, 0.18);
+  border-color: rgba(138, 86, 209, 0.5);
+}

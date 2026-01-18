@@ -451,4 +451,36 @@
   .detailsGrid { grid-template-columns: 1fr; }
   .footer { flex-direction: column; align-items: stretch; }
   .footerRight { justify-content: flex-end; }
+  .modalContent { padding: 20px; max-height: 92vh; }
+  .headerGrid { grid-template-columns: 1fr; }
+  .cover { height: 240px; }
+  .detailsGrid { grid-template-columns: 1fr; }
+  .footer { flex-direction: column; align-items: stretch; }
+  .footerRight { justify-content: flex-end; }
+
+  /* --- FIX PENTRU ATAȘAMENTE AICI --- */
+  .attachmentCard {
+    flex-direction: column; /* Le pune unul sub altul */
+    align-items: flex-start; /* Aliniere la stânga */
+    gap: 16px; /* Spațiu între numele fișierului și butoane */
+  }
+
+  .attachmentLeft {
+    width: 100%; /* Textul ocupă toată lățimea */
+  }
+
+  /* Opțional: Butoanele să fie mari și ușor de apăsat pe mobil */
+  .attachmentActions {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+  }
+
+  /* Targetăm butoanele din interior (secondaryBtn) */
+  .attachmentActions .secondaryBtn, 
+  .attachmentActions a {
+    flex: 1; /* Butoanele vor ocupa spațiu egal (50% - 50%) */
+    justify-content: center; /* Textul centrat */
+    text-align: center;
+  }
 }

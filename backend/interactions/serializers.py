@@ -142,6 +142,10 @@ class FavoriteSerializer(serializers.ModelSerializer):
         fields = ["id", "user", "event", "event_id", "added_at"]
         read_only_fields = ["id", "user", "event", "added_at"]
 
+# Ticket Check-in
+class TicketCheckinSerializer(serializers.Serializer):
+    event_id = serializers.IntegerField()
+    qr_code_data = serializers.CharField(allow_blank=False, trim_whitespace=True)
 
 # Notification
 class NotificationSerializer(serializers.ModelSerializer):
