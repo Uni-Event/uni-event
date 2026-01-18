@@ -1,0 +1,61 @@
+.page {
+  font-family: "Inter", sans-serif;
+}
+
+.header {
+  margin-bottom: 1.25rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #2d3748;
+  margin: 0 0 0.5rem 0;
+}
+
+.subtitle {
+  color: #718096;
+  margin: 0;
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sectionHeader {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sectionTitle {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #111;
+  margin: 0;
+}
+
+.sectionCount {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #64748b;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.empty {
+  color: #94a3b8;
+  font-weight: 700;
+  padding: 10px 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

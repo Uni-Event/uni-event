@@ -5,12 +5,17 @@ from .views import (
     OrganizerRequestCreateView,
     OrganizerRequestListAdminView,
     OrganizerRequestUpdateAdminView,
-    GoogleLoginView
+    GoogleLoginView,
+    ChangePasswordView,
+    OrganizerRequestMeView,
 )
+
 
 urlpatterns = [
     path("register/", RegisterView.as_view()),
     path("profile/", ProfileView.as_view()),
+    path("change-password/", ChangePasswordView.as_view()),
+    path("organizer-request/me/", OrganizerRequestMeView.as_view()),
 
     # organizer request
     path("organizer-request/", OrganizerRequestCreateView.as_view()),

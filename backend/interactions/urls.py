@@ -3,13 +3,18 @@ from .views import (
     TicketCreateView, TicketListView,
     FavoriteListCreateView, FavoriteDeleteView,
     ReviewCreateView,
-    NotificationListView
+    NotificationListView,
+    TicketDeleteView,
+    TicketCheckinView,
 )
+
 
 urlpatterns = [
     # tickets
     path("tickets/", TicketListView.as_view()),
     path("tickets/buy/", TicketCreateView.as_view()),
+    path("tickets/<int:pk>/", TicketDeleteView.as_view()),
+    path("tickets/checkin/", TicketCheckinView.as_view()), 
 
     # favorites
     path("favorites/", FavoriteListCreateView.as_view()),

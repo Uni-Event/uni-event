@@ -1,0 +1,360 @@
+/* Card */
+.card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.cardPast {
+  opacity: 0.88;
+}
+
+.btnDisabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.btnDisabled:hover {
+  background: #fff;    
+  border-color: #ddd;
+  color: #444;
+}
+
+/* Header clickable */
+.headerBtn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 18px;
+  cursor: pointer;
+  text-align: left;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.headerGrid {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 18px;
+  align-items: start;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Cover cu gradient */
+.cover {
+  width: 100%;
+  height: 160px;
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0,0,0,0.00) 0%,
+    rgba(0,0,0,0.18) 100%
+  );
+  pointer-events: none;
+}
+
+.coverImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.coverPlaceholder {
+  width: 100%;
+  height: 100%;
+  opacity: 0.35;
+}
+
+.headerContent {
+  padding-top: 2px;
+  min-width: 0;
+}
+
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #111;
+  margin: 0;
+  letter-spacing: -0.4px;
+
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badgesRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(138, 86, 209, 0.35);
+  background: #f3e5f5;
+  color: #8a56d1;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.badgeValid {
+  border-color: rgba(22, 163, 74, 0.35);
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.badgeInvalid {
+  border-color: rgba(217, 119, 6, 0.35);
+  background: #ffedd5;
+  color: #b45309;
+}
+
+.subRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 0.95rem;
+  margin-top: 10px;
+}
+
+.metaRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 0.95rem;
+  margin-top: 8px;
+}
+
+.metaStack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.metaLine {
+  display: flex;         
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 0.95rem;
+  min-width: 0;
+}
+
+.iconPurple {
+  color: #8a56d1;
+  flex-shrink: 0;
+}
+
+.ellipsis {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chevron {
+  color: #64748b;
+  font-size: 1.25rem;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+/* Divider */
+.thickDivider {
+  border-bottom: 2px solid #e0e0e0;
+  margin: 0 18px;
+}
+
+/* Details grid */
+.detailsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  background: #fafafa;
+  border: 1px solid #eeeeee;
+  border-radius: 18px;
+  padding: 14px;
+  margin: 18px;
+}
+
+.detailCard {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  border: 1px solid #e9e7ff;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.05);
+}
+
+.coverPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.55);
+  position: relative;
+  z-index: 1;
+}
+
+.label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.value {
+  font-size: 1rem;
+  color: #111;
+  font-weight: 800;
+}
+
+.mapLink {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #8a56d1;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+.mapLink:hover { text-decoration: underline; }
+
+/* Footer */
+.footer {
+  margin: 0 18px 18px;
+  padding-top: 18px;
+  border-top: 2px solid #e0e0e0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+}
+
+.footerRight {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Buttons */
+.secondaryBtn {
+  font-size: 0.95rem;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 700;
+
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #444;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.secondaryBtn:hover {
+  background: #f7f7f7;
+  border-color: #ccc;
+  color: #333;
+}
+
+.qrBtn {
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.qrBtn:hover {
+  background: #dbeafe;
+  border-color: rgba(37, 99, 235, 0.35);
+  color: #1e40af;
+}
+.qrBtn:disabled {
+  background: #eef2ff;     
+  border-color: #c7d2fe;
+  cursor: not-allowed;
+  color: #818cf8;
+}
+.qrBtn:disabled:hover {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #818cf8;
+}
+
+
+.dangerBtn {
+  font-size: 0.95rem;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 700;
+
+  border: 1px solid #fecaca;
+  background: #fff5f5;
+  color: #b91c1c;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.dangerBtn:hover {
+  background: #ffe4e6;
+}
+
+.dangerBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .headerGrid {
+    grid-template-columns: 1fr;
+  }
+  .cover {
+    height: 200px;
+  }
+  .detailsGrid {
+    grid-template-columns: 1fr;
+  }
+}

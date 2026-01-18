@@ -1,17 +1,36 @@
+import React from "react";
+import logo from "../../assets/logo-UniEvent.png";
+
 const AuthOverlay = () => {
   return (
     <div className="overlay-container">
       <div className="overlay">
+        {/* LEFT PANEL */}
         <div className="overlay-panel overlay-left">
-          <div className="logo-text">UniEvent</div>
-          <h1>UNIEVENT</h1>
-          <p>Organizează, programează și coordonează evenimentele academice într-un singur loc.</p>
+          <img
+            src={logo}
+            alt="UniEvent"
+            className="brand-logo"
+            style={{
+              width: "900px",
+              maxWidth: "130%",
+              height: "auto",
+            }}
+          />
         </div>
 
+        {/* RIGHT PANEL */}
         <div className="overlay-panel overlay-right">
-          <div className="logo-text">UniEvent</div>
-          <h1>BINE AI VENIT!</h1>
-          <p>Creează-ți un cont pentru a accesa toate funcționalitățile platformei.</p>
+          <img
+            src={logo}
+            alt="UniEvent"
+            className="brand-logo"
+            style={{
+              width: "900px",
+              maxWidth: "130%",
+              height: "auto",
+            }}
+          />
         </div>
       </div>
     </div>

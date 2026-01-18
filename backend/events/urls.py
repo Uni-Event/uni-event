@@ -1,16 +1,12 @@
 from django.urls import path
-
-
-from .views import EventListCreateView, EventDetailView
-
-
 from .views import (
   EventListCreateView, 
   EventDetailView,
   FacultyListView, 
   DepartmentListView, 
   CategoryListView,
-  MyEventsListView
+  MyEventsListView,
+  EventStatsView,
 )
 
 
@@ -18,6 +14,7 @@ urlpatterns = [
     path("", EventListCreateView.as_view()),
     path("my/", MyEventsListView.as_view(), name="my-events"),
     path("<int:pk>/", EventDetailView.as_view()),
+    path("<int:pk>/stats/", EventStatsView.as_view(), name="event-stats"),
 
     # Endpoints for Faculties, Departments, Categories - DIANA
     path("faculties/", FacultyListView.as_view(), name='faculty-list'),

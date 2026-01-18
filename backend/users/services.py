@@ -3,10 +3,11 @@ from google.auth.transport import requests as google_requests
 from django.contrib.auth import get_user_model
 from django.conf import settings
 import uuid
+import os
+
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 
 User = get_user_model()
-
-GOOGLE_CLIENT_ID = "344307986436-j0o4fqcrj14smhqvrgmt3jkngpgnm1nu.apps.googleusercontent.com"
 
 def google_validate_id_token(token: str):
     """
@@ -33,6 +34,7 @@ def google_validate_id_token(token: str):
     except ValueError as e:
         print(f"!!! EROARE VALIDARE GOOGLE: {e}")
         return None
+
 
 def google_get_or_create_user(user_data):
     """

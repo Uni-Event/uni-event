@@ -1,10 +1,11 @@
 from django.contrib import admin
 from .models import Faculty, Department, Category, Location, Event
 
-# Configurare simpla pentru nomenclatoare (tablele mici, fixe)
+
 admin.site.register(Faculty)
 admin.site.register(Location)
 admin.site.register(Category)
+
 
 # Configurare pentru Departamente (cu filtrare dupa facultate)
 @admin.register(Department)
@@ -12,13 +13,13 @@ class DepartmentAdmin(admin.ModelAdmin):
     list_display = ('name', 'faculty')
     list_filter = ('faculty',)
 
-# Configurare complexa pentru Evenimente
+
+# Configurare pentru Evenimente
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    # Ce coloane vedem in tabel
     list_display = ('title', 'organizer', 'status', 'start_date', 'faculty')
     
-    # Filtre in dreapta
+    # Filtre 
     list_filter = ('status', 'faculty', 'category', 'start_date')
     search_fields = ('title', 'organizer__email')
 

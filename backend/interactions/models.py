@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from events.models import Event 
 
+
 class Ticket(models.Model):
     # Relatii
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='tickets')
@@ -20,6 +21,7 @@ class Ticket(models.Model):
     def __str__(self):
         return f"Bilet: {self.user.email} -> {self.event.title}"
 
+
 class Review(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='reviews')
@@ -34,7 +36,8 @@ class Review(models.Model):
         unique_together = ('user', 'event')
 
     def __str__(self):
-        return f"{self.rating}★ - {self.event.title}"
+        return f"{self.rating} - {self.event.title}"
+
 
 class Favorite(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='favorites')
@@ -46,6 +49,7 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f"{self.user.email} <3 {self.event.title}"
+
 
 class Notification(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')

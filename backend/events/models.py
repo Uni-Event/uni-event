@@ -1,5 +1,6 @@
 from django.db import models
-from django.conf import settings  # Importam setarile pentru a ajunge la User
+from django.conf import settings  
+
 
 class Faculty(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -11,12 +12,14 @@ class Faculty(models.Model):
     def __str__(self):
         return self.name
 
+
 class Department(models.Model):
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, related_name='departments')
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return f"{self.name} ({self.faculty.abbreviation})"
+
 
 class Category(models.Model):
     name = models.CharField(max_length=50) # Ex: Cultural, Sportiv
@@ -27,6 +30,7 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
 class Location(models.Model):
     name = models.CharField(max_length=100) # Ex: Aula Magna
     address = models.CharField(max_length=255)
@@ -35,8 +39,9 @@ class Location(models.Model):
     def __str__(self):
         return self.name
 
+
 class Event(models.Model):
-    # Statusurile posibile pentru fluxul de validare
+    # Statusurile posibile 
     STATUS_CHOICES = [
         ('draft', 'Draft (In lucru)'),
         ('pending', 'In Asteptare Validare'),

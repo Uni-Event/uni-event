@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from urllib.parse import urlparse, parse_qsl
 
 from datetime import timedelta # 29.11.25 For setting token expiration times
 from dotenv import load_dotenv # 29.11.25 For loading environment variables from a .env file
@@ -32,6 +33,16 @@ SECRET_KEY = 'django-insecure-xk%$r+1!8c1pqs)(4rm9e)gl6k4fvs1y#mh3=us+0yu@aoz@px
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"] # 29.11.25 Set to allow all hosts for development purposes.
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
+
+# CSRF: permite origin-urile (frontend + backend)
+CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
 
 # 29.11.25 Django REST Framework configuration
 REST_FRAMEWORK = {
@@ -114,10 +125,20 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': tmpPostgres.path.replace('/', ''),
+        'USER': tmpPostgres.username,
+        'PASSWORD': tmpPostgres.password,
+        'HOST': tmpPostgres.hostname,
+        'PORT': 5432,
+        'OPTIONS': dict(parse_qsl(tmpPostgres.query)),
     }
 }
 
@@ -163,11 +184,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 CORS_ALLOW_ALL_ORIGINS = True           # 29.11.25 Allow all origins for CORS (development only)
-CORS_ALLOWS_CREDENTIALS = True          # 29.11.25 Allow cookies to be included in cross-site HTTP requests
+CORS_ALLOW_CREDENTIALS = True          # 29.11.25 Allow cookies to be included in cross-site HTTP requests
 AUTH_USER_MODEL = 'users.CustomUser'    # 29.11.25 Use custom user model
-
 
 # 15.12.25 Media files settings
 MEDIA_URL = '/media/'
