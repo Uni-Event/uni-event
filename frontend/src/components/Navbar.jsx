@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   FaBars,
@@ -16,11 +16,27 @@ import styles from "../styles/Navbar.module.css";
 import { ACCESS_TOKEN } from "../constants";
 import logo from "../assets/logo-UniEvent.png";
 
+import api from "../services/api";
+import { useNotifications } from "../notifications/notifications.store";
+
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
   const navigate = useNavigate();
+  const notifRef = useRef(null);
 
   const token = localStorage.getItem(ACCESS_TOKEN);
+
+  const { unreadCount, setUnreadCount, items, setItems } = useNotifications();
+
+  useEffect(() => {
+    const onDown = (e) => {
+      if (!notifRef.current) return;
+      if (!notifRef.current.contains(e.target)) setNotifOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, []);
 
   // Decode user din token (safe)
   const user = useMemo(() => {
@@ -58,16 +74,24 @@ function Navbar() {
   // Link-uri comune
   const navLinks = [
     { to: "/", label: "Acasă" },
-    { to: "/", label: "Notificări" },
+    //{ to: "/", label: "Notificări" },
   ];
 
   // Link-uri specifice rolului
   const roleMenuItems = useMemo(() => {
     if (isOrganizer) {
       return [
-        { to: "/organizer/dashboard", label: "Gestiune", icon: <FaClipboardList /> },
+        {
+          to: "/organizer/dashboard",
+          label: "Gestiune",
+          icon: <FaClipboardList />,
+        },
         { to: "/organizer/stats", label: "Statistici", icon: <FaChartBar /> },
-        { to: "/organizer/scan", label: "Scanare Bilete", icon: <BsQrCodeScan /> },
+        {
+          to: "/organizer/scan",
+          label: "Scanare Bilete",
+          icon: <BsQrCodeScan />,
+        },
       ];
     }
 
@@ -77,7 +101,70 @@ function Navbar() {
     ];
   }, [isOrganizer]);
 
+  const notifItems = useMemo(() => {
+    if (Array.isArray(items)) return items;
+    if (items && Array.isArray(items.results)) return items.results; // DRF pagination
+    if (items && Array.isArray(items.notifications)) return items.notifications; // alt backend
+    return [];
+  }, [items]);
+
   if (!token) return null;
+
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+
+  const markOneRead = async (id) => {
+    try {
+      await api.patch(
+        `${API_BASE_URL}/api/interactions/notifications/${id}/read/`
+      );
+    } catch (e) {
+      console.error(e);
+    }
+
+    setItems((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
+    );
+    setUnreadCount((c) => Math.max(0, c - 1));
+  };
+
+  const markAllRead = async () => {
+    try {
+      await api.patch(
+        `${API_BASE_URL}/api/interactions/notifications/read-all/`
+      );
+    } catch (e) {
+      console.error(e);
+    }
+
+    setItems((prev) => prev.map((n) => ({ ...n, is_read: true })));
+    setUnreadCount(0);
+  };
+
+  const fetchNotifications = async () => {
+    try {
+      const { data } = await api.get(
+        `${API_BASE_URL}/api/interactions/notifications/`
+      );
+
+      // IMPORTANT: ajustează aici dacă API-ul întoarce {results: [...]}
+      const list = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.items)
+        ? data.items
+        : Array.isArray(data?.results)
+        ? data.results
+        : [];
+
+      setItems(list);
+      setUnreadCount(list.filter((n) => !n.is_read).length);
+    } catch (e) {
+      console.error("Fetch notifications failed:", e);
+    }
+  };
+
+  console.log("items type:", Array.isArray(items), "items:", items);
+  console.log("notifItems length:", notifItems.length, notifItems);
 
   return (
     <>
@@ -97,13 +184,74 @@ function Navbar() {
             <div className={styles.navLinks}>
               {navLinks.map((link) => (
                 <Link
-                  key={`${link.to}-${link.label}`}  // evita key duplicat
+                  key={`${link.to}-${link.label}`} // evita key duplicat
                   to={link.to}
                   className={styles.navLink}
                 >
                   {link.label}
                 </Link>
               ))}
+              {/* Notificări (buton identic ca stil cu link-ul) */}
+              <div className={styles.notifWrap} ref={notifRef}>
+                <button
+                  type="button"
+                  className={styles.navLink}
+                  onClick={async () => {
+                    const next = !notifOpen;
+                    setNotifOpen(next);
+                    if (next) await fetchNotifications();
+                  }}
+                >
+                  Notificări
+                  {unreadCount > 0 && <span className={styles.notifDot} />}
+                </button>
+
+                {notifOpen && (
+                  <div className={styles.notifDropdown} role="menu">
+                    <div className={styles.notifHeader}>
+                      <span>Notificări</span>
+                      <button
+                        type="button"
+                        className={styles.notifAction}
+                        onClick={markAllRead}
+                        disabled={unreadCount === 0}
+                      >
+                        Marchează toate
+                      </button>
+                    </div>
+
+                    <div className={styles.notifList}>
+                      {notifItems.length === 0 ? (
+                        <div className={styles.notifEmpty}>
+                          Nu ai notificări.
+                        </div>
+                      ) : (
+                        notifItems.slice(0, 8).map((n) => (
+                          <button
+                            key={n.id}
+                            type="button"
+                            className={`${styles.notifItem} ${
+                              !n.is_read ? styles.unread : ""
+                            }`}
+                            onClick={() => {
+                              if (!n.is_read) markOneRead(n.id);
+                              setNotifOpen(false);
+                            }}
+                          >
+                            <div className={styles.notifTitle}>{n.title}</div>
+                            <div className={styles.notifMsg}>{n.message}</div>
+                            <div className={styles.notifTime}>
+                              {n.created_at
+                                ? new Date(n.created_at).toLocaleString()
+                                : ""}
+                            </div>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Profil + Dropdown */}
@@ -136,7 +284,11 @@ function Navbar() {
 
                 {/* Role items */}
                 {roleMenuItems.map((item) => (
-                  <Link key={item.to} to={item.to} className={styles.dropdownItem}>
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    className={styles.dropdownItem}
+                  >
                     {item.icon} {item.label}
                   </Link>
                 ))}
@@ -175,7 +327,11 @@ function Navbar() {
       </nav>
 
       {/* MENIU MOBIL */}
-      <div className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.active : ""}`}>
+      <div
+        className={`${styles.mobileMenu} ${
+          isMobileMenuOpen ? styles.active : ""
+        }`}
+      >
         <div className={styles.mobileProfile}>
           <div
             className={styles.mobileAvatar}
@@ -210,7 +366,11 @@ function Navbar() {
           </Link>
         ))}
 
-        <Link to="/profile" className={styles.mobileLink} onClick={closeMobileMenu}>
+        <Link
+          to="/profile"
+          className={styles.mobileLink}
+          onClick={closeMobileMenu}
+        >
           <FaUser style={{ marginRight: "10px" }} />
           Profil
         </Link>

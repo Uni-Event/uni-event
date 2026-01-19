@@ -21,6 +21,8 @@ import FavoritesPage from "./pages/FavoritesPage";
 import MyTicketsPage from "./pages/MyTicketsPage";
 import ProfilePage from "./pages/ProfilePage";
 
+import NotificationsProvider from "./notifications/NotificationsProvider";
+
 function Logout() {
   localStorage.clear();
 
@@ -36,83 +38,85 @@ function RegisterAndLogout() {
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <DashboardWrapper />
-            </ProtectedRoute>
-          }
-        />
+      <NotificationsProvider>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <DashboardWrapper />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="my-tickets"
-          element={
-            <ProtectedRoute>
-              <MyTicketsPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="my-tickets"
+            element={
+              <ProtectedRoute>
+                <MyTicketsPage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/favorites"
-          element={
-            <ProtectedRoute>
-              <FavoritesPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/favorites"
+            element={
+              <ProtectedRoute>
+                <FavoritesPage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/organizer/dashboard"
-          element={
-            <ProtectedRoute requiredRole="organizer">
-              <OrganizerDashboardPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/organizer/dashboard"
+            element={
+              <ProtectedRoute requiredRole="organizer">
+                <OrganizerDashboardPage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/organizer/scan"
-          element={
-            <ProtectedRoute requiredRole="organizer">
-              <OrganizerScanPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/organizer/scan"
+            element={
+              <ProtectedRoute requiredRole="organizer">
+                <OrganizerScanPage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/organizer/scan/:eventId"
-          element={
-            <ProtectedRoute requiredRole="organizer">
-              <OrganizerScanEventPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/organizer/scan/:eventId"
+            element={
+              <ProtectedRoute requiredRole="organizer">
+                <OrganizerScanEventPage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/organizer/stats"
-          element={
-            <ProtectedRoute requiredRole="organizer">
-              <OrganizerStatisticsPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/organizer/stats"
+            element={
+              <ProtectedRoute requiredRole="organizer">
+                <OrganizerStatisticsPage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route path="/auth" element={<RegisterAndLogout />} />
-        <Route path="/logout" element={<Logout />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+          <Route path="/auth" element={<RegisterAndLogout />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </NotificationsProvider>
     </Router>
   );
 }

@@ -1,336 +1,49 @@
-/* Importam fontul modern 'Inter' */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
-/* --- NAVBAR (Fix Sus) --- */
+/* =========================
+   NAVBAR (Fix Sus)
+   ========================= */
 .navbar {
-  background-color: #ffffff;
+  background: #ffffff;
   border-bottom: 1px solid #f0f0f0;
   width: 100%;
-  flex-shrink: 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  font-family: "Inter", sans-serif;
   height: 72px;
+  font-family: "Inter", sans-serif;
 }
 
 .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 40px;
-  height: 100%;
   max-width: 1280px;
   margin: 0 auto;
-}
-
-/* Logo */
-.navLogo {
-  flex: 0 0 auto;
-}
-
-/* (lăsat cum era pentru text, dar override mai jos pentru img) */
-.logoLink {
-  color: #8a56d1;
-  font-weight: 800;
-  font-size: 1.6rem;
-  text-decoration: none;
-  letter-spacing: -0.5px;
-}
-
-/* Partea dreaptă */
-.navRight {
-  display: flex;
-  align-items: center;
-  gap: 40px;
-}
-
-/* Link-uri */
-.navLinks {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.navLink {
-  color: #666;
-  font-size: 0.95rem;
-  font-weight: 500;
-  text-decoration: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.navLink:hover {
-  color: #8a56d1;
-  background-color: #f9f5ff;
-}
-
-/* --- PROFIL & DROPDOWN --- */
-.profileContainer {
-  position: relative;
   height: 100%;
+  padding: 0 40px;
   display: flex;
   align-items: center;
-}
-
-.profileSection {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 6px 12px;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: 1px solid transparent;
-}
-
-.profileSection:hover {
-  background-color: #f8f9fa;
-  border-color: #eee;
-}
-
-.avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background-color: #e0e0e0;
-  background-size: cover;
-  background-position: center;
-  flex-shrink: 0;
-  border: 2px solid #fff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-}
-
-.profileInfo {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.3;
-  align-items: flex-start;
-}
-
-.greeting {
-  font-size: 0.75rem;
-  color: #888;
-  font-weight: 500;
-}
-
-.username {
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: #1a1a1a;
-}
-
-/* --- DROPDOWN MENU (FIXAT: nu mai iese din frame) --- */
-.dropdownMenu {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0; /* ANCORARE la dreapta */
-  left: auto;
-
-  width: 260px; /* puțin mai lat ca să intre emailul */
-  max-width: min(260px, calc(100vw - 24px)); /* nu depășește viewport-ul */
-  overflow: hidden; /* nu mai “iese” nimic */
-
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  border: 1px solid #eee;
-  padding: 8px;
-
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(10px);
-  transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
-  z-index: 1001;
-}
-
-/* Triunghi mic sus */
-.dropdownMenu::before {
-  content: "";
-  position: absolute;
-  top: -6px;
-  right: 22px;
-  width: 12px;
-  height: 12px;
-  background: white;
-  transform: rotate(45deg);
-  border-left: 1px solid #eee;
-  border-top: 1px solid #eee;
-}
-
-/* Afisare la hover */
-.profileContainer:hover .dropdownMenu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-/* Email: să nu “spargă” dropdown-ul */
-.emailDisplay {
-  padding: 10px 12px;
-  font-size: 0.82rem;
-  color: #333;
-  font-weight: 600;
-
-  white-space: normal; /* permite wrap */
-  overflow-wrap: anywhere; /* rupe la nevoie */
-  word-break: break-word;
-
-  border-radius: 10px;
-  background: #fafafa;
-  border: 1px solid #f0f0f0;
-}
-
-/* Item-urile să rămână în interior */
-.dropdownItem {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 12px 12px; /* padding uniform */
-  border: none;
-  background: none;
-  text-align: left;
-  font-size: 0.9rem;
-  color: #444;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s;
-  font-family: "Inter", sans-serif;
-  font-weight: 500;
-  text-decoration: none;
-
-  box-sizing: border-box; /* nu mai depășește */
-}
-
-.dropdownItem:hover {
-  background-color: #f5f5f5;
-  color: #8a56d1;
-}
-
-.danger {
-  color: #d32f2f !important;
-}
-
-.danger:hover {
-  background-color: #fff0f0 !important;
-  color: #d32f2f !important;
-}
-
-/* Separator */
-.divider {
-  height: 1px;
-  background-color: #eee;
-  margin: 6px 0;
-}
-
-/* BUTON HAMBURGER */
-.menuToggle {
-  display: none;
-  background: none;
-  border: none;
-  color: #1a1a1a;
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 5px;
-}
-
-/* ===== RESPONSIVE ===== */
-@media screen and (max-width: 768px) {
-  .navLinks,
-  .profileContainer {
-    display: none;
-  }
-
-  .menuToggle {
-    display: block;
-  }
-}
-
-/* Meniu Mobil */
-.mobileMenu {
-  position: fixed;
-  top: 72px;
-  left: 0;
-  width: 100%;
-  height: calc(100vh - 72px);
-  background: white;
-  transform: translateX(100%);
-  transition: transform 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  z-index: 998;
-  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
-}
-
-.mobileMenu.active {
-  transform: translateX(0);
-}
-
-.mobileProfile {
-  padding: 30px 20px;
-  background: #f9f9f9;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.mobileAvatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-size: cover;
-  border: 2px solid white;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.mobileUserInfo {
-  display: flex;
-  flex-direction: column;
-}
-
-.mobileUsername {
-  font-weight: 700;
-  color: #333;
-}
-
-.mobileGreeting {
-  font-size: 0.8rem;
-  color: #666;
-}
-
-.mobileLink {
-  padding: 15px 25px;
-  text-decoration: none;
-  color: #333;
-  font-weight: 600;
-  border-bottom: 1px solid #f5f5f5;
+  justify-content: space-between;
 }
 
 /* =========================
-   LOGO (img) în navbar
+   LOGO
    ========================= */
-
 .navLogo {
   height: 72px;
   display: flex;
   align-items: center;
+  flex: 0 0 auto;
 }
 
 .logoLink {
   display: flex;
   align-items: center;
   height: 100%;
-  text-decoration: none;
   padding: 0;
+  text-decoration: none;
 }
 
-/* imaginea logo - FIX: încadrat în navbar */
 .navbarLogo {
-  height: 200px; /* <<< IMPORTANT (nu 200px) */
+  height: 56px; /* FIX: incadrat corect in navbar */
   width: auto;
   max-width: 190px;
   object-fit: contain;
@@ -366,9 +79,436 @@
   }
 }
 
+/* =========================
+   RIGHT SIDE
+   ========================= */
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+/* =========================
+   LINKS (Acasa + Notificari)
+   ========================= */
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navLink {
+  color: #666;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  /* IMPORTANT: ca sa fie identic pt Link + button */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: "Inter", sans-serif;
+  line-height: 1;
+}
+
+.navLink:hover {
+  color: #8a56d1;
+  background: #f9f5ff;
+}
+
+/* focus accesibil */
+.navLink:focus-visible {
+  outline: 2px solid rgba(138, 86, 209, 0.45);
+  outline-offset: 2px;
+}
+
+/* Notificari wrapper */
+.notifWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Dot (badge) */
+.notifDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #e53935;
+}
+
+/* =========================
+   NOTIFICATIONS DROPDOWN
+   ========================= */
+.notifDropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 340px;
+  max-width: min(340px, calc(100vw - 24px));
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  box-shadow: 0 14px 50px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  z-index: 1100;
+}
+
+/* Header dropdown */
+.notifHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f1f1;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.notifAction {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 700;
+  color: #8a56d1;
+  font-size: 0.85rem;
+  padding: 6px 8px;
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+.notifAction:hover {
+  background: #f6f0ff;
+}
+
+.notifAction:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Lista */
+.notifList {
+  max-height: 360px;
+  overflow: auto;
+}
+
+.notifEmpty {
+  padding: 16px;
+  color: #777;
+  font-weight: 600;
+}
+
+/* Item notificare */
+.notifItem {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 12px 14px;
+  transition: background 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: "Inter", sans-serif;
+}
+
+.notifItem:hover {
+  background: #faf7ff;
+}
+
+.unread {
+  background: #f7f2ff;
+}
+
+.notifTitle {
+  font-weight: 800;
+  color: #1a1a1a;
+  font-size: 0.92rem;
+}
+
+.notifMsg {
+  color: #555;
+  font-size: 0.86rem;
+  line-height: 1.25;
+}
+
+.notifTime {
+  color: #999;
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+/* =========================
+   PROFILE + DROPDOWN
+   ========================= */
+.profileContainer {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.profileSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.profileSection:hover {
+  background: #f8f9fa;
+  border-color: #eee;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+
+.greeting {
+  font-size: 0.75rem;
+  color: #888;
+  font-weight: 500;
+}
+
+.username {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+}
+
+/* Dropdown profil */
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 260px;
+  max-width: min(260px, calc(100vw - 24px));
+  overflow: hidden;
+
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  box-shadow: 0 12px 44px rgba(0, 0, 0, 0.12);
+  padding: 8px;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+  z-index: 1001;
+}
+
+.dropdownMenu::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 22px;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  transform: rotate(45deg);
+  border-left: 1px solid #eee;
+  border-top: 1px solid #eee;
+}
+
+/* Afisare dropdown la hover */
+.profileContainer:hover .dropdownMenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Email (zona top) */
+.emailDisplay {
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  color: #333;
+  font-weight: 700;
+  border-radius: 10px;
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Item dropdown */
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 12px;
+  border: none;
+  background: none;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #444;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.dropdownItem:hover {
+  background: #f5f5f5;
+  color: #8a56d1;
+}
+
+.danger {
+  color: #d32f2f !important;
+}
+
+.danger:hover {
+  background: #fff0f0 !important;
+  color: #d32f2f !important;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: #eee;
+  margin: 6px 0;
+}
+
+/* =========================
+   HAMBURGER (MOBILE)
+   ========================= */
+.menuToggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #1a1a1a;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 10px;
+}
+
+.menuToggle:hover {
+  background: #f5f5f5;
+}
+
+/* =========================
+   MOBILE MENU
+   ========================= */
+.mobileMenu {
+  position: fixed;
+  top: 72px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 72px);
+  background: #fff;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  z-index: 998;
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
+}
+
+.mobileMenu.active {
+  transform: translateX(0);
+}
+
+.mobileProfile {
+  padding: 24px 20px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mobileAvatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.mobileUserInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileGreeting {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.mobileUsername {
+  font-weight: 800;
+  color: #333;
+}
+
+.mobileLink {
+  padding: 15px 25px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 700;
+  border-bottom: 1px solid #f5f5f5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobileLink:hover {
+  background: #faf7ff;
+  color: #8a56d1;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
 @media screen and (max-width: 768px) {
+  .navLinks,
+  .profileContainer {
+    display: none;
+  }
+
+  .menuToggle {
+    display: block;
+  }
+
+  .container {
+    padding: 0 18px;
+  }
+
   .navbarLogo {
-    height: 150px;
+    height: 44px;
     max-width: 160px;
   }
 }

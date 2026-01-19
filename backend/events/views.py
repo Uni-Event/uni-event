@@ -17,6 +17,7 @@ from rest_framework import filters, generics, permissions
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 # --- Importuri locale ---
 from .models import Category, Department, Event, Faculty
@@ -218,3 +219,19 @@ class EventStatsView(APIView):
                 "latest_reviews": latest_reviews,
             }
         )
+    
+class PendingEventsCountView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        # doar admin / staff / superuser
+        if not (user.is_staff or user.is_superuser):
+            return Response({"count": 0})
+
+        pending_count = Event.objects.filter(status="pending").count()
+
+        return Response({
+            "count": pending_count
+        })

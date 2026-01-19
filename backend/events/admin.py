@@ -40,8 +40,15 @@ class EventAdmin(admin.ModelAdmin):
 
     @admin.action(description='Valideaza evenimentele selectate (Publica)')
     def approve_events(self, request, queryset):
-        queryset.update(status='published')
+        for ev in queryset:
+            if ev.status != "published":
+                ev.status = "published"
+                ev.save(update_fields=["status"])  # declanșează pre_save/post_save signals
+
 
     @admin.action(description='Respinge evenimentele selectate')
     def reject_events(self, request, queryset):
-        queryset.update(status='rejected')
+        for ev in queryset:
+            if ev.status != "rejected":
+                ev.status = "rejected"
+                ev.save(update_fields=["status"])  # declanșează signals
