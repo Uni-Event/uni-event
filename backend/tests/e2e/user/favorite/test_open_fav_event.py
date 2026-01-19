@@ -3,7 +3,7 @@ from playwright.sync_api import Page, expect
 import time # pentru timestamp
 import re
 
-BASE_UI = "http://localhost:5173"
+BASE_UI = "https://unievent-14dq.onrender.com"
 TARGET_TITLE = "Testare"
 
 # Funcție de așteptare lentă

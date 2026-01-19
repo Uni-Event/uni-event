@@ -2,7 +2,7 @@
 from playwright.sync_api import Page, expect
 import time # pentru timestamp
 
-BASE_UI = "http://localhost:5173"
+BASE_UI = "https://unievent-14dq.onrender.com"
 
 # Test pentru înregistrare și login prin UI
 def test_register_and_login_ui(page: Page):

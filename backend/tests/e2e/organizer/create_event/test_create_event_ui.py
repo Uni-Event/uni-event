@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 # bibliotecă Playwright pentru gestionare erori
 from playwright.sync_api import Error as PlaywrightError
 
-BASE_UI = "http://localhost:5173"
+BASE_UI = "https://unievent-14dq.onrender.com"
 EMAIL = "test@gmail.com"
 PASSWORD = "Test1234!"
 

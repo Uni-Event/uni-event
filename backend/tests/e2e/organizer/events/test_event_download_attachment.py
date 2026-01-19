@@ -2,15 +2,16 @@ from pathlib import Path # for file operations
 from urllib.parse import urljoin # to construct URLs
 # biblioteci Playwright pentru gestionare pagini și așteptări
 from playwright.sync_api import Page, expect
+import re
 
-BASE_UI = "http://localhost:5173"
+BASE_UI = "https://unievent-14dq.onrender.com"
 BASE_MEDIA = "http://localhost:8000"
 
 EMAIL = "test@gmail.com"
 PASSWORD = "Test1234!"
 
 TARGET_TITLE = "Testare"
-TARGET_FILE = "IP_Laborator_12_bSpsQw8.pdf"
+TARGET_FILE = "IP_Laborator_13_V9Avzqe.pdf"
 # URL direct către fișierul atașat
 DIRECT_FILE_URL = urljoin(BASE_MEDIA, f"/media/event_files/{TARGET_FILE}")
 
@@ -94,6 +95,9 @@ def test_download_attachment_only(page: Page):
     downloads_dir.mkdir(exist_ok=True)
 
     save_path = downloads_dir / TARGET_FILE
-    download_via_request(page, DIRECT_FILE_URL, save_path)
+    expect(page).to_have_url(re.compile(r"/media/event_files/.*\.pdf"), timeout=20000)
+    file_url = page.url
+    download_via_request(page, file_url, save_path)
+
 
     slow(page, 4200)

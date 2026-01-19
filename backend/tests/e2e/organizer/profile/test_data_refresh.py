@@ -2,7 +2,7 @@ import re
 # biblioteci Playwright pentru gestionare pagini și așteptări
 from playwright.sync_api import Page, expect
 
-BASE_UI = "http://localhost:5173"
+BASE_UI = "https://unievent-14dq.onrender.com"
 AUTH_URL_RE = re.compile(r".*/auth/?$")
 
 EMAIL = "test@gmail.com"

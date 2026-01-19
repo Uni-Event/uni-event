@@ -8,7 +8,7 @@ GOOGLE_RE = re.compile(r"(accounts\.google\.com|oauth|google)", re.IGNORECASE)
 
 # Test pentru a verifica fluxul OAuth Google prin UI
 def test_google_oauth_flow_starts_or_returns_to_app(page: Page):
-    page.goto("http://localhost:5173/auth", wait_until="domcontentloaded")
+    page.goto("https://unievent-14dq.onrender.com/auth", wait_until="domcontentloaded")
 
     google_btn = page.get_by_text("Continuă cu Google", exact=True)
     expect(google_btn).to_be_visible()

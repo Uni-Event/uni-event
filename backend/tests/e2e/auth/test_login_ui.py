@@ -3,7 +3,7 @@ from playwright.sync_api import Page, expect
 
 # Test pentru a verifica autentificarea cu email și parolă prin UI
 def test_login_with_email_and_password(page: Page):
-    page.goto("http://localhost:5173/auth", wait_until="domcontentloaded")
+    page.goto("https://unievent-14dq.onrender.com/auth", wait_until="domcontentloaded")
 
     login_form = page.locator("form").filter(has_text="Bine ai revenit!")
 
@@ -12,4 +12,4 @@ def test_login_with_email_and_password(page: Page):
 
     login_form.get_by_role("button", name="AUTENTIFICARE").click()
 
-    expect(page).not_to_have_url("http://localhost:5173/auth")
+    expect(page).not_to_have_url("https://unievent-14dq.onrender.com/auth")

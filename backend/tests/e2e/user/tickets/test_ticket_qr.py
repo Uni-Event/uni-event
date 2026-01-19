@@ -4,7 +4,7 @@ import time # pentru timestamp unic
 import re # pentru regex
 import random # pentru randomizare pauze
 
-BASE_UI = "http://localhost:5173"
+BASE_UI = "https://unievent-14dq.onrender.com"
 TARGET_TITLE = "Testare"
 
 # Funcție de pauză cu durată aleatoare
