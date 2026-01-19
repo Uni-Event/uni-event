@@ -4,13 +4,14 @@
    NAVBAR (Fix Sus)
    ========================= */
 .navbar {
-  background: #ffffff;
-  border-bottom: 1px solid #f0f0f0;
-  width: 100%;
+  background-color: #ffffff;
   position: sticky;
   top: 0;
   z-index: 1000;
   height: 72px;
+  /* Eliminăm orice umbră sau border care ar putea tăia designul */
+  border: none;
+  box-shadow: none;
   font-family: "Inter", sans-serif;
 }
 
@@ -510,5 +511,308 @@
   .navbarLogo {
     height: 44px;
     max-width: 160px;
+  }
+}
+
+/* =========================
+   FADE NAVBAR
+   ========================= */
+/* strat de tranziție între navbar și background */
+.navbar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 46px;
+  pointer-events: none;
+  z-index: 0;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(250, 248, 255, 0.55) 45%,
+    rgba(197, 180, 227, 0.78) 100%
+  );
+}
+
+/* conținutul navbarului peste efecte */
+.container {
+  position: relative;
+  z-index: 2;
+}
+
+/* Glow fin sub navbar (nu bandă) */
+.navbar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 1px;
+  pointer-events: none;
+  z-index: 0; /* peste fade */
+
+  background: linear-gradient(
+    to right,
+    rgba(138, 86, 209, 0),
+    rgba(138, 86, 209, 0.18),
+    rgba(138, 86, 209, 0)
+  );
+}
+
+/* Mobil: fade puțin mai mic */
+@media screen and (max-width: 768px) {
+  .navbar::after {
+    height: 36px;
+    bottom: 0;
+  }
+
+  .navbar::before {
+    bottom: 0;
+    height: 1px;
+  }
+}
+
+/* =========================
+   MOBILE NOTIFICATIONS BUTTON
+   ========================= */
+
+.mobileIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+}
+
+.mobileNotifBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.mobileNotifText {
+  flex: 1;
+  text-align: left;
+}
+
+.mobileNotifBadge {
+  margin-left: auto;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #fff;
+  background: #e53935; /* rosu */
+}
+
+/* =========================
+   MOBILE NOTIFICATIONS MODAL
+   ========================= */
+
+.mobileNotifOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.mobileNotifSheet {
+  width: 100%;
+  max-width: 520px;
+  height: min(78vh, 680px);
+  background: #fff;
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileNotifTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+}
+
+.mobileNotifTitle {
+  font-weight: 900;
+  color: #111;
+  font-size: 1.05rem;
+}
+
+.mobileNotifTopActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobileNotifMarkAll {
+  border: none;
+  background: #f6f0ff;
+  color: #8a56d1;
+  font-weight: 800;
+  padding: 8px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.mobileNotifMarkAll:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mobileNotifClose {
+  border: none;
+  background: #f5f5f5;
+  color: #111;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.mobileNotifList {
+  flex: 1;
+  overflow: auto;
+}
+
+.mobileNotifEmpty {
+  padding: 16px;
+  color: #777;
+  font-weight: 700;
+}
+
+.mobileNotifItem {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: #fff;
+  cursor: pointer;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f3f3f3;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: "Inter", sans-serif;
+}
+
+.mobileNotifItem:hover {
+  background: #faf7ff;
+}
+
+.mobileNotifUnread {
+  background: #f7f2ff;
+}
+
+.mobileNotifItemTitle {
+  font-weight: 900;
+  color: #111;
+  font-size: 0.95rem;
+}
+
+.mobileNotifItemMsg {
+  color: #555;
+  font-size: 0.88rem;
+  line-height: 1.25;
+}
+
+.mobileNotifItemTime {
+  color: #999;
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+/* =========================
+   MOBILE NOTIF – OPEN / CLOSE ANIMATION
+   ========================= */
+
+@keyframes mobileNotifOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mobileNotifOverlayFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes mobileNotifSheetSlideUp {
+  from {
+    transform: translateY(22px);
+    opacity: 0.98;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes mobileNotifSheetSlideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(26px);
+    opacity: 0;
+  }
+}
+
+/* OPEN */
+.mobileNotifOverlay {
+  animation: mobileNotifOverlayFadeIn 180ms ease-out forwards;
+}
+
+.mobileNotifSheet {
+  animation: mobileNotifSheetSlideUp 240ms cubic-bezier(0.2, 0.8, 0.2, 1)
+    forwards;
+  will-change: transform, opacity;
+}
+
+/* CLOSE */
+.mobileNotifOverlay.closing {
+  animation: mobileNotifOverlayFadeOut 160ms ease-in forwards;
+}
+
+.mobileNotifOverlay.closing .mobileNotifSheet {
+  animation: mobileNotifSheetSlideDown 200ms cubic-bezier(0.4, 0, 0.6, 1)
+    forwards;
+}
+
+/* reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .mobileNotifOverlay,
+  .mobileNotifSheet {
+    animation: none !important;
   }
 }

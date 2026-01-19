@@ -9,6 +9,7 @@ import {
   FaHeart,
   FaChartBar,
   FaClipboardList,
+  FaBell,
 } from "react-icons/fa";
 import { BsQrCodeScan } from "react-icons/bs";
 import { jwtDecode } from "jwt-decode";
@@ -18,17 +19,25 @@ import logo from "../assets/logo-UniEvent.png";
 
 import api from "../services/api";
 import { useNotifications } from "../notifications/notifications.store";
+import MobileNotifications from "./MobileNotifications";
 
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // desktop dropdown
   const [notifOpen, setNotifOpen] = useState(false);
-  const navigate = useNavigate();
   const notifRef = useRef(null);
 
+  // mobile modal
+  const [mobileNotifOpen, setMobileNotifOpen] = useState(false);
+  const [mobileNotifClosing, setMobileNotifClosing] = useState(false);
+
+  const navigate = useNavigate();
   const token = localStorage.getItem(ACCESS_TOKEN);
 
   const { unreadCount, setUnreadCount, items, setItems } = useNotifications();
 
+  // ✅ close desktop notif dropdown on outside click
   useEffect(() => {
     const onDown = (e) => {
       if (!notifRef.current) return;
@@ -38,7 +47,6 @@ function Navbar() {
     return () => document.removeEventListener("mousedown", onDown);
   }, []);
 
-  // Decode user din token (safe)
   const user = useMemo(() => {
     const fallback = { name: "Utilizator", email: "", isOrganizer: false };
     if (!token) return fallback;
@@ -46,7 +54,6 @@ function Navbar() {
     try {
       const decoded = jwtDecode(token);
       const displayName = decoded.full_name || decoded.email || "Utilizator";
-
       return {
         name: displayName,
         email: decoded.email || "",
@@ -60,7 +67,13 @@ function Navbar() {
   const isOrganizer = user.isOrganizer;
 
   const toggleMobileMenu = () => setIsMobileMenuOpen((v) => !v);
-  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+    // daca notificari mobile sunt deschise, le inchidem "hard"
+    setMobileNotifClosing(false);
+    setMobileNotifOpen(false);
+  };
 
   const handleLogout = () => {
     closeMobileMenu();
@@ -71,13 +84,8 @@ function Navbar() {
     user.name
   )}&background=8a56d1&color=fff&size=128&bold=true`;
 
-  // Link-uri comune
-  const navLinks = [
-    { to: "/", label: "Acasă" },
-    //{ to: "/", label: "Notificări" },
-  ];
+  const navLinks = [{ to: "/", label: "Acasă" }];
 
-  // Link-uri specifice rolului
   const roleMenuItems = useMemo(() => {
     if (isOrganizer) {
       return [
@@ -103,6 +111,7 @@ function Navbar() {
 
   const notifItems = useMemo(() => {
     if (Array.isArray(items)) return items;
+    if (items && Array.isArray(items.items)) return items.items; // backend {items:[...]}
     if (items && Array.isArray(items.results)) return items.results; // DRF pagination
     if (items && Array.isArray(items.notifications)) return items.notifications; // alt backend
     return [];
@@ -123,7 +132,7 @@ function Navbar() {
     }
 
     setItems((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
+      (prev || []).map((n) => (n.id === id ? { ...n, is_read: true } : n))
     );
     setUnreadCount((c) => Math.max(0, c - 1));
   };
@@ -137,7 +146,7 @@ function Navbar() {
       console.error(e);
     }
 
-    setItems((prev) => prev.map((n) => ({ ...n, is_read: true })));
+    setItems((prev) => (prev || []).map((n) => ({ ...n, is_read: true })));
     setUnreadCount(0);
   };
 
@@ -147,7 +156,6 @@ function Navbar() {
         `${API_BASE_URL}/api/interactions/notifications/`
       );
 
-      // IMPORTANT: ajustează aici dacă API-ul întoarce {results: [...]}
       const list = Array.isArray(data)
         ? data
         : Array.isArray(data?.items)
@@ -158,20 +166,38 @@ function Navbar() {
 
       setItems(list);
       setUnreadCount(list.filter((n) => !n.is_read).length);
+      return list;
     } catch (e) {
       console.error("Fetch notifications failed:", e);
+      return [];
     }
   };
 
-  console.log("items type:", Array.isArray(items), "items:", items);
-  console.log("notifItems length:", notifItems.length, notifItems);
+  const openMobileNotifications = async () => {
+    // daca era in tranzitie de inchidere, anulam
+    setMobileNotifClosing(false);
+    await fetchNotifications();
+    setMobileNotifOpen(true);
+  };
+
+  // ✅ close cu animatie
+  const closeMobileNotifications = () => {
+    if (!mobileNotifOpen) return;
+    setMobileNotifClosing(true);
+
+    // trebuie sa corespunda cu durata din CSS (ex: 200ms)
+    window.setTimeout(() => {
+      setMobileNotifClosing(false);
+      setMobileNotifOpen(false);
+    }, 200);
+  };
 
   return (
     <>
       {/* NAVBAR (Desktop) */}
       <nav className={styles.navbar}>
         <div className={styles.container}>
-          {/* Logo (IMAGINE) */}
+          {/* Logo */}
           <div className={styles.navLogo}>
             <Link to="/" className={styles.logoLink} aria-label="UniEvent">
               <img src={logo} alt="UniEvent" className={styles.navbarLogo} />
@@ -180,18 +206,18 @@ function Navbar() {
 
           {/* Right side */}
           <div className={styles.navRight}>
-            {/* Link-uri comune */}
+            {/* Links + Notificari (desktop) */}
             <div className={styles.navLinks}>
               {navLinks.map((link) => (
                 <Link
-                  key={`${link.to}-${link.label}`} // evita key duplicat
+                  key={`${link.to}-${link.label}`}
                   to={link.to}
                   className={styles.navLink}
                 >
                   {link.label}
                 </Link>
               ))}
-              {/* Notificări (buton identic ca stil cu link-ul) */}
+
               <div className={styles.notifWrap} ref={notifRef}>
                 <button
                   type="button"
@@ -254,7 +280,7 @@ function Navbar() {
               </div>
             </div>
 
-            {/* Profil + Dropdown */}
+            {/* Profil + Dropdown (desktop) */}
             <div className={styles.profileContainer}>
               <div className={styles.profileSection}>
                 <div
@@ -268,7 +294,6 @@ function Navbar() {
               </div>
 
               <div className={styles.dropdownMenu}>
-                {/* Email */}
                 <div
                   className={styles.dropdownItem}
                   style={{
@@ -282,7 +307,6 @@ function Navbar() {
 
                 <div className={styles.divider} />
 
-                {/* Role items */}
                 {roleMenuItems.map((item) => (
                   <Link
                     key={item.to}
@@ -295,14 +319,12 @@ function Navbar() {
 
                 <div className={styles.divider} />
 
-                {/* Profil */}
                 <Link to="/profile" className={styles.dropdownItem}>
                   <FaUser /> Profil
                 </Link>
 
                 <div className={styles.divider} />
 
-                {/* Logout */}
                 <button
                   onClick={handleLogout}
                   className={`${styles.dropdownItem} ${styles.danger}`}
@@ -313,7 +335,7 @@ function Navbar() {
               </div>
             </div>
 
-            {/* Hamburger (Mobil) */}
+            {/* Hamburger (mobil) */}
             <button
               className={styles.menuToggle}
               onClick={toggleMobileMenu}
@@ -355,15 +377,34 @@ function Navbar() {
         ))}
 
         {roleMenuItems.map((item) => (
-          <Link
-            key={item.to}
-            to={item.to}
-            className={styles.mobileLink}
-            onClick={closeMobileMenu}
-          >
-            <span style={{ marginRight: "10px" }}>{item.icon}</span>
-            {item.label}
-          </Link>
+          <React.Fragment key={item.to}>
+            <Link
+              to={item.to}
+              className={styles.mobileLink}
+              onClick={closeMobileMenu}
+            >
+              <span className={styles.mobileIcon}>{item.icon}</span>
+              {item.label}
+            </Link>
+
+            {/* Notificări imediat după Favorite (doar user normal) */}
+            {!isOrganizer && item.to === "/favorites" && (
+              <button
+                type="button"
+                className={`${styles.mobileLink} ${styles.mobileNotifBtn}`}
+                onClick={openMobileNotifications}
+              >
+                <span className={styles.mobileIcon}>
+                  <FaBell />
+                </span>
+                <span className={styles.mobileNotifText}>Notificări</span>
+
+                {unreadCount > 0 && (
+                  <span className={styles.mobileNotifBadge}>{unreadCount}</span>
+                )}
+              </button>
+            )}
+          </React.Fragment>
         ))}
 
         <Link
@@ -384,6 +425,25 @@ function Navbar() {
           Deconectare
         </div>
       </div>
+
+      {/* ✅ Mobile notifications modal (componenta) + close animat */}
+      <MobileNotifications
+        open={mobileNotifOpen}
+        closing={mobileNotifClosing}
+        onClose={closeMobileNotifications}
+        items={notifItems}
+        unreadCount={unreadCount}
+        onMarkOneRead={(id) => {
+          // la click pe notif: marcheaza + inchide frumos + inchide meniul
+          if (!id) return;
+          markOneRead(id);
+          closeMobileNotifications();
+          setIsMobileMenuOpen(false);
+        }}
+        onMarkAllRead={() => {
+          markAllRead();
+        }}
+      />
     </>
   );
 }
