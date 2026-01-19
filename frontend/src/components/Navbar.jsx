@@ -1,3 +1,4 @@
+// src/components/Navbar.jsx
 import React, { useMemo, useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -18,10 +19,18 @@ import logo from "../assets/logo-UniEvent.png";
 
 import api from "../services/api";
 import { useNotifications } from "../notifications/notifications.store";
+import MobileNotifications from "../components/MobileNotifications";
 
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [notifOpen, setNotifOpen] = useState(false);
+
+  // desktop dropdown
+  const [notifDesktopOpen, setNotifDesktopOpen] = useState(false);
+
+  // mobile drawer
+  const [notifMobileOpen, setNotifMobileOpen] = useState(false);
+  const [notifLoading, setNotifLoading] = useState(false);
+
   const navigate = useNavigate();
   const notifRef = useRef(null);
 
@@ -29,14 +38,19 @@ function Navbar() {
 
   const { unreadCount, setUnreadCount, items, setItems } = useNotifications();
 
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+
+  // close desktop dropdown when click outside
   useEffect(() => {
     const onDown = (e) => {
+      if (!notifDesktopOpen) return;
       if (!notifRef.current) return;
-      if (!notifRef.current.contains(e.target)) setNotifOpen(false);
+      if (!notifRef.current.contains(e.target)) setNotifDesktopOpen(false);
     };
     document.addEventListener("mousedown", onDown);
     return () => document.removeEventListener("mousedown", onDown);
-  }, []);
+  }, [notifDesktopOpen]);
 
   // Decode user din token (safe)
   const user = useMemo(() => {
@@ -46,7 +60,6 @@ function Navbar() {
     try {
       const decoded = jwtDecode(token);
       const displayName = decoded.full_name || decoded.email || "Utilizator";
-
       return {
         name: displayName,
         email: decoded.email || "",
@@ -72,26 +85,15 @@ function Navbar() {
   )}&background=8a56d1&color=fff&size=128&bold=true`;
 
   // Link-uri comune
-  const navLinks = [
-    { to: "/", label: "Acasă" },
-    //{ to: "/", label: "Notificări" },
-  ];
+  const navLinks = [{ to: "/", label: "Acasă" }];
 
   // Link-uri specifice rolului
   const roleMenuItems = useMemo(() => {
     if (isOrganizer) {
       return [
-        {
-          to: "/organizer/dashboard",
-          label: "Gestiune",
-          icon: <FaClipboardList />,
-        },
+        { to: "/organizer/dashboard", label: "Gestiune", icon: <FaClipboardList /> },
         { to: "/organizer/stats", label: "Statistici", icon: <FaChartBar /> },
-        {
-          to: "/organizer/scan",
-          label: "Scanare Bilete",
-          icon: <BsQrCodeScan />,
-        },
+        { to: "/organizer/scan", label: "Scanare Bilete", icon: <BsQrCodeScan /> },
       ];
     }
 
@@ -101,53 +103,44 @@ function Navbar() {
     ];
   }, [isOrganizer]);
 
+  // normalize notifications list
   const notifItems = useMemo(() => {
     if (Array.isArray(items)) return items;
-    if (items && Array.isArray(items.results)) return items.results; // DRF pagination
-    if (items && Array.isArray(items.notifications)) return items.notifications; // alt backend
+    if (items && Array.isArray(items.results)) return items.results;
+    if (items && Array.isArray(items.notifications)) return items.notifications;
     return [];
   }, [items]);
 
   if (!token) return null;
 
-  const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
-
   const markOneRead = async (id) => {
     try {
-      await api.patch(
-        `${API_BASE_URL}/api/interactions/notifications/${id}/read/`
-      );
+      await api.patch(`${API_BASE_URL}/api/interactions/notifications/${id}/read/`);
     } catch (e) {
       console.error(e);
     }
 
     setItems((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
+      (prev || []).map((n) => (n.id === id ? { ...n, is_read: true } : n))
     );
     setUnreadCount((c) => Math.max(0, c - 1));
   };
 
   const markAllRead = async () => {
     try {
-      await api.patch(
-        `${API_BASE_URL}/api/interactions/notifications/read-all/`
-      );
+      await api.patch(`${API_BASE_URL}/api/interactions/notifications/read-all/`);
     } catch (e) {
       console.error(e);
     }
 
-    setItems((prev) => prev.map((n) => ({ ...n, is_read: true })));
+    setItems((prev) => (prev || []).map((n) => ({ ...n, is_read: true })));
     setUnreadCount(0);
   };
 
   const fetchNotifications = async () => {
     try {
-      const { data } = await api.get(
-        `${API_BASE_URL}/api/interactions/notifications/`
-      );
+      const { data } = await api.get(`${API_BASE_URL}/api/interactions/notifications/`);
 
-      // IMPORTANT: ajustează aici dacă API-ul întoarce {results: [...]}
       const list = Array.isArray(data)
         ? data
         : Array.isArray(data?.items)
@@ -158,20 +151,19 @@ function Navbar() {
 
       setItems(list);
       setUnreadCount(list.filter((n) => !n.is_read).length);
+      return list;
     } catch (e) {
       console.error("Fetch notifications failed:", e);
+      return [];
     }
   };
-
-  console.log("items type:", Array.isArray(items), "items:", items);
-  console.log("notifItems length:", notifItems.length, notifItems);
 
   return (
     <>
       {/* NAVBAR (Desktop) */}
       <nav className={styles.navbar}>
         <div className={styles.container}>
-          {/* Logo (IMAGINE) */}
+          {/* Logo */}
           <div className={styles.navLogo}>
             <Link to="/" className={styles.logoLink} aria-label="UniEvent">
               <img src={logo} alt="UniEvent" className={styles.navbarLogo} />
@@ -180,25 +172,26 @@ function Navbar() {
 
           {/* Right side */}
           <div className={styles.navRight}>
-            {/* Link-uri comune */}
+            {/* Link-uri comune (desktop) */}
             <div className={styles.navLinks}>
               {navLinks.map((link) => (
                 <Link
-                  key={`${link.to}-${link.label}`} // evita key duplicat
+                  key={`${link.to}-${link.label}`}
                   to={link.to}
                   className={styles.navLink}
                 >
                   {link.label}
                 </Link>
               ))}
-              {/* Notificări (buton identic ca stil cu link-ul) */}
+
+              {/* Notificări desktop */}
               <div className={styles.notifWrap} ref={notifRef}>
                 <button
                   type="button"
                   className={styles.navLink}
                   onClick={async () => {
-                    const next = !notifOpen;
-                    setNotifOpen(next);
+                    const next = !notifDesktopOpen;
+                    setNotifDesktopOpen(next);
                     if (next) await fetchNotifications();
                   }}
                 >
@@ -206,7 +199,7 @@ function Navbar() {
                   {unreadCount > 0 && <span className={styles.notifDot} />}
                 </button>
 
-                {notifOpen && (
+                {notifDesktopOpen && (
                   <div className={styles.notifDropdown} role="menu">
                     <div className={styles.notifHeader}>
                       <span>Notificări</span>
@@ -222,9 +215,7 @@ function Navbar() {
 
                     <div className={styles.notifList}>
                       {notifItems.length === 0 ? (
-                        <div className={styles.notifEmpty}>
-                          Nu ai notificări.
-                        </div>
+                        <div className={styles.notifEmpty}>Nu ai notificări.</div>
                       ) : (
                         notifItems.slice(0, 8).map((n) => (
                           <button
@@ -235,15 +226,13 @@ function Navbar() {
                             }`}
                             onClick={() => {
                               if (!n.is_read) markOneRead(n.id);
-                              setNotifOpen(false);
+                              setNotifDesktopOpen(false);
                             }}
                           >
                             <div className={styles.notifTitle}>{n.title}</div>
                             <div className={styles.notifMsg}>{n.message}</div>
                             <div className={styles.notifTime}>
-                              {n.created_at
-                                ? new Date(n.created_at).toLocaleString()
-                                : ""}
+                              {n.created_at ? new Date(n.created_at).toLocaleString() : ""}
                             </div>
                           </button>
                         ))
@@ -268,7 +257,6 @@ function Navbar() {
               </div>
 
               <div className={styles.dropdownMenu}>
-                {/* Email */}
                 <div
                   className={styles.dropdownItem}
                   style={{
@@ -282,27 +270,20 @@ function Navbar() {
 
                 <div className={styles.divider} />
 
-                {/* Role items */}
                 {roleMenuItems.map((item) => (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    className={styles.dropdownItem}
-                  >
+                  <Link key={item.to} to={item.to} className={styles.dropdownItem}>
                     {item.icon} {item.label}
                   </Link>
                 ))}
 
                 <div className={styles.divider} />
 
-                {/* Profil */}
                 <Link to="/profile" className={styles.dropdownItem}>
                   <FaUser /> Profil
                 </Link>
 
                 <div className={styles.divider} />
 
-                {/* Logout */}
                 <button
                   onClick={handleLogout}
                   className={`${styles.dropdownItem} ${styles.danger}`}
@@ -327,11 +308,7 @@ function Navbar() {
       </nav>
 
       {/* MENIU MOBIL */}
-      <div
-        className={`${styles.mobileMenu} ${
-          isMobileMenuOpen ? styles.active : ""
-        }`}
-      >
+      <div className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.active : ""}`}>
         <div className={styles.mobileProfile}>
           <div
             className={styles.mobileAvatar}
@@ -354,6 +331,24 @@ function Navbar() {
           </Link>
         ))}
 
+        <button
+          type="button"
+          className={`${styles.mobileLink} ${styles.mobileLinkBtn}`}
+          onClick={() => {
+            closeMobileMenu();
+
+            // deschide drawer imediat
+            setNotifMobileOpen(true);
+
+            // apoi fetch + loading
+            setNotifLoading(true);
+            fetchNotifications().finally(() => setNotifLoading(false));
+          }}
+        >
+          Notificări
+          {unreadCount > 0 && <span className={styles.mobileDot} />}
+        </button>
+
         {roleMenuItems.map((item) => (
           <Link
             key={item.to}
@@ -366,11 +361,7 @@ function Navbar() {
           </Link>
         ))}
 
-        <Link
-          to="/profile"
-          className={styles.mobileLink}
-          onClick={closeMobileMenu}
-        >
+        <Link to="/profile" className={styles.mobileLink} onClick={closeMobileMenu}>
           <FaUser style={{ marginRight: "10px" }} />
           Profil
         </Link>
@@ -379,11 +370,26 @@ function Navbar() {
           className={styles.mobileLink}
           onClick={handleLogout}
           style={{ color: "#d32f2f" }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") handleLogout();
+          }}
         >
           <FaSignOutAlt style={{ marginRight: "10px" }} />
           Deconectare
         </div>
       </div>
+
+      <MobileNotifications
+        open={notifMobileOpen}
+        onClose={() => setNotifMobileOpen(false)}
+        items={notifItems}
+        unreadCount={unreadCount}
+        onMarkOneRead={markOneRead}
+        onMarkAllRead={markAllRead}
+        loading={notifLoading}
+      />
     </>
   );
 }

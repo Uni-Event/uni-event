@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import styles from "../styles/EventDetailsModal.module.css";
 import {
   FiX,
@@ -16,14 +17,15 @@ import {
 import { FaHeart } from "react-icons/fa";
 import api from "../services/api";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 const getMediaUrl = (path) => {
   if (!path) return null;
   const str = String(path);
   if (str.startsWith("http")) return str;
 
-  let clean = str.startsWith("/") ? str : `/${str}`;
+  const clean = str.startsWith("/") ? str : `/${str}`;
   if (!clean.startsWith("/media")) return `${API_BASE_URL}/media${clean}`;
   return `${API_BASE_URL}${clean}`;
 };
@@ -75,13 +77,15 @@ export default function EventDetailsModal({
 
   const locationAddress = useMemo(() => {
     const loc = safeEvent.location;
-    return typeof loc === "object" ? (loc.address || "") : "";
+    return typeof loc === "object" ? loc.address || "" : "";
   }, [safeEvent.location]);
 
   const mapsLink = useMemo(() => {
     return (
       safeEvent.googleMapsLink ||
-      (typeof safeEvent.location === "object" ? safeEvent.location.google_maps_link : null)
+      (typeof safeEvent.location === "object"
+        ? safeEvent.location.google_maps_link
+        : null)
     );
   }, [safeEvent.googleMapsLink, safeEvent.location]);
 
@@ -109,12 +113,19 @@ export default function EventDetailsModal({
     if (typeof safeEvent?.seats_left === "number") return safeEvent.seats_left;
 
     if (typeof safeEvent?.max_participants === "number") {
-      const sold = typeof safeEvent?.tickets_count === "number" ? safeEvent.tickets_count : 0;
+      const sold =
+        typeof safeEvent?.tickets_count === "number"
+          ? safeEvent.tickets_count
+          : 0;
       return Math.max((safeEvent.max_participants || 0) - sold, 0);
     }
 
     return null;
-  }, [safeEvent?.seats_left, safeEvent?.max_participants, safeEvent?.tickets_count]);
+  }, [
+    safeEvent?.seats_left,
+    safeEvent?.max_participants,
+    safeEvent?.tickets_count,
+  ]);
 
   const closeWithAnimation = () => {
     if (isClosing) return;
@@ -165,7 +176,9 @@ export default function EventDetailsModal({
   };
 
   const { signupDisabled, signupLabel, titleHint } = useMemo(() => {
-    const startDate = safeEvent?.start_date ? new Date(safeEvent.start_date) : null;
+    const startDate = safeEvent?.start_date
+      ? new Date(safeEvent.start_date)
+      : null;
     const isPast = startDate ? startDate <= new Date() : false;
 
     const max = safeEvent?.max_participants;
@@ -195,7 +208,13 @@ export default function EventDetailsModal({
       : "Creează bilet";
 
     return { signupDisabled: disabled, signupLabel: label, titleHint: hint };
-  }, [safeEvent?.start_date, safeEvent?.max_participants, ticketsCount, hasTicket, isBuying]);
+  }, [
+    safeEvent?.start_date,
+    safeEvent?.max_participants,
+    ticketsCount,
+    hasTicket,
+    isBuying,
+  ]);
 
   const extractErrorMessage = (err) => {
     const data = err?.response?.data;
@@ -240,18 +259,30 @@ export default function EventDetailsModal({
 
   if (!isOpen) return null;
 
-  return (
+  const modalNode = (
     <div
-      className={`${styles.modalOverlay} ${isClosing ? styles.overlayClosing : styles.overlayOpen}`}
-      onMouseDown={closeWithAnimation}
+      className={`${styles.modalOverlay} ${
+        isClosing ? styles.overlayClosing : styles.overlayOpen
+      }`}
+      //  închide doar dacă dai click pe overlay, nu oriunde
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) closeWithAnimation();
+      }}
       role="dialog"
       aria-modal="true"
     >
       <div
-        className={`${styles.modalContent} ${isClosing ? styles.modalClosing : styles.modalOpen}`}
+        className={`${styles.modalContent} ${
+          isClosing ? styles.modalClosing : styles.modalOpen
+        }`}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <button className={styles.closeButton} onClick={closeWithAnimation} aria-label="Închide" type="button">
+        <button
+          className={styles.closeButton}
+          onClick={closeWithAnimation}
+          aria-label="Închide"
+          type="button"
+        >
           <FiX />
         </button>
 
@@ -291,7 +322,8 @@ export default function EventDetailsModal({
             <div className={styles.descriptionBlock}>
               <div className={styles.sectionTitle}>Descriere</div>
               <p className={styles.description}>
-                {(safeEvent.description || "").trim() || "Fără descriere disponibilă."}
+                {(safeEvent.description || "").trim() ||
+                  "Fără descriere disponibilă."}
               </p>
             </div>
           </div>
@@ -305,7 +337,9 @@ export default function EventDetailsModal({
             <FiCalendar className={styles.iconPurple} />
             <div>
               <div className={styles.label}>Începe</div>
-              <div className={styles.value}>{formatDateFull(safeEvent.start_date)}</div>
+              <div className={styles.value}>
+                {formatDateFull(safeEvent.start_date)}
+              </div>
             </div>
           </div>
 
@@ -313,13 +347,14 @@ export default function EventDetailsModal({
             <FiCalendar className={styles.iconPurple} />
             <div>
               <div className={styles.label}>Se termină</div>
-              <div className={styles.value}>{formatDateFull(safeEvent.end_date)}</div>
+              <div className={styles.value}>
+                {formatDateFull(safeEvent.end_date)}
+              </div>
             </div>
           </div>
 
           <div className={styles.detailCard}>
             <FiMapPin className={styles.iconPurple} />
-
             <div className={styles.detailBody}>
               <button
                 type="button"
@@ -337,7 +372,9 @@ export default function EventDetailsModal({
               {openLocation ? (
                 <>
                   {locationAddress ? (
-                    <div className={styles.locationAddress}>{locationAddress}</div>
+                    <div className={styles.locationAddress}>
+                      {locationAddress}
+                    </div>
                   ) : null}
 
                   {mapsLink ? (
@@ -359,7 +396,6 @@ export default function EventDetailsModal({
 
           <div className={styles.detailCard}>
             <FiUsers className={styles.iconPurple} />
-
             <div className={styles.detailBody}>
               <button
                 type="button"
@@ -372,11 +408,14 @@ export default function EventDetailsModal({
                 </span>
               </button>
 
-              <div className={styles.value}>{safeEvent.max_participants ?? "—"}</div>
+              <div className={styles.value}>
+                {safeEvent.max_participants ?? "—"}
+              </div>
 
               {openCapacity && typeof seatsLeft === "number" ? (
                 <div className={styles.seatsLine}>
-                  Locuri disponibile: <span className={styles.seatsValue}>{seatsLeft}</span>
+                  Locuri disponibile:{" "}
+                  <span className={styles.seatsValue}>{seatsLeft}</span>
                 </div>
               ) : null}
             </div>
@@ -390,7 +429,9 @@ export default function EventDetailsModal({
               <div className={styles.attachmentTitle}>Fișier atașat</div>
               <div className={styles.attachmentNameRow}>
                 <FiFileText className={styles.attachmentIcon} />
-                <div className={styles.attachmentName}>{fileName || "document"}</div>
+                <div className={styles.attachmentName}>
+                  {fileName || "document"}
+                </div>
               </div>
             </div>
 
@@ -406,7 +447,12 @@ export default function EventDetailsModal({
                 Deschide
               </a>
 
-              <a className={styles.secondaryBtn} href={fileUrl} download onClick={(e) => e.stopPropagation()}>
+              <a
+                className={styles.secondaryBtn}
+                href={fileUrl}
+                download
+                onClick={(e) => e.stopPropagation()}
+              >
                 <FiDownload />
                 Descarcă
               </a>
@@ -418,7 +464,9 @@ export default function EventDetailsModal({
         <div className={styles.footer}>
           {showFavorite && (
             <button
-              className={`${styles.favBtn} ${isFavorite ? styles.favBtnActive : ""}`}
+              className={`${styles.favBtn} ${
+                isFavorite ? styles.favBtnActive : ""
+              }`}
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
@@ -432,7 +480,11 @@ export default function EventDetailsModal({
           )}
 
           <div className={styles.footerRight}>
-            <button className={styles.secondaryBtn} onClick={closeWithAnimation} type="button">
+            <button
+              className={styles.secondaryBtn}
+              onClick={closeWithAnimation}
+              type="button"
+            >
               Închide
             </button>
 
@@ -459,4 +511,7 @@ export default function EventDetailsModal({
       </div>
     </div>
   );
+
+  // randăm modalul direct în body (peste navbar)
+  return createPortal(modalNode, document.body);
 }
