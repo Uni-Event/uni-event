@@ -13,7 +13,7 @@ const AuthOverlay = () => {
             className="brand-logo"
             style={{
               width: "900px",
-              maxWidth: "130%",
+              maxWidth: "100%",
               height: "auto",
             }}
           />
@@ -27,7 +27,7 @@ const AuthOverlay = () => {
             className="brand-logo"
             style={{
               width: "900px",
-              maxWidth: "130%",
+              maxWidth: "100%",
               height: "auto",
             }}
           />

@@ -82,13 +82,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "users",                # 29.11.25 Custom user app
-    "events",               # 29.11.25 Events app
     "interactions",         # 29.11.25 Interactions app
     "rest_framework",       # 29.11.25 Added for Django REST Framework
     "corsheaders",          # 29.11.25 Added for handling CORS
     "django_filters",       # 29.11.25 Added for filtering support
     "drf_yasg",             # 29.11.25 Added for API documentation
     "django_extensions",    # 06.12.25 Added for additional management commands
+    "events.apps.EventsConfig",               # 29.11.25 Events app, modified on 18.01.2026 for notifications
 ]
 
 MIDDLEWARE = [
@@ -132,13 +132,13 @@ DATABASES = {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': BASE_DIR / 'db.sqlite3',
 
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': tmpPostgres.path.replace('/', ''),
-        'USER': tmpPostgres.username,
-        'PASSWORD': tmpPostgres.password,
-        'HOST': tmpPostgres.hostname,
-        'PORT': 5432,
-        'OPTIONS': dict(parse_qsl(tmpPostgres.query)),
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': tmpPostgres.path.replace('/', ''),
+            'USER': tmpPostgres.username,
+            'PASSWORD': tmpPostgres.password,
+            'HOST': tmpPostgres.hostname,
+            'PORT': 5432,
+            'OPTIONS': dict(parse_qsl(tmpPostgres.query)),
     }
 }
 

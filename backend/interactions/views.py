@@ -20,6 +20,13 @@ from .serializers import (
 from events.models import Event
 import uuid
 
+from .realtime import push_to_user
+
+try:
+    from events.models import Event
+except Exception:
+    Event = None
+
 
 QR_PREFIX = "UNIEVENT:TICKET:V1:"
 
@@ -31,7 +38,18 @@ class TicketCreateView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         qr = uuid.uuid4()
-        serializer.save(user=self.request.user, qr_code_data=str(qr))
+        ticket = serializer.save(user=self.request.user, qr_code_data=str(qr))
+
+        try:
+            notif = Notification.objects.create(
+                user=self.request.user,
+                title="Bilet cumpărat",
+                message=f"Ai cumpărat un bilet pentru: {ticket.event.title}",
+            )
+            emit_notification(notif)
+        except Exception as e:
+            print("Notification failed:", e)
+
 
 
 class TicketListView(generics.ListAPIView):
@@ -51,7 +69,20 @@ class TicketDeleteView(generics.DestroyAPIView):
     def perform_destroy(self, instance):
         if instance.event.start_date and instance.event.start_date <= timezone.now():
             raise ValidationError({"detail": "Nu poți anula biletul după ce evenimentul a început."})
+
+        event_title = instance.event.title
         instance.delete()
+
+
+        try:
+            notif = Notification.objects.create(
+                user=self.request.user,
+                title="Bilet anulat",
+                message=f"Ai anulat biletul pentru: {event_title}",
+            )
+            emit_notification(notif)
+        except Exception as e:
+            print("Notification failed:", e)
 
 
 # Favorite Views
@@ -63,7 +94,18 @@ class FavoriteListCreateView(generics.ListCreateAPIView):
         return Favorite.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        fav = serializer.save(user=self.request.user)
+
+        try:
+            event_title = fav.event.title if fav.event else "eveniment"
+            notif = Notification.objects.create(
+                user=self.request.user,
+                title="Adăugat la favorite",
+                message=f"Ai adăugat la favorite: {event_title}",
+            )
+            emit_notification(notif)
+        except Exception as e:
+            print("Notification failed:", e)
 
 
 class FavoriteDeleteView(generics.DestroyAPIView):
@@ -73,6 +115,19 @@ class FavoriteDeleteView(generics.DestroyAPIView):
     def get_queryset(self):
         return Favorite.objects.filter(user=self.request.user)
 
+    def perform_destroy(self, instance):
+        event_title = instance.event.title if instance.event else "eveniment"
+        instance.delete()
+
+        try:
+            notif = Notification.objects.create(
+                user=self.request.user,
+                title="Șters din favorite",
+                message=f"Ai șters din favorite: {event_title}",
+            )
+            emit_notification(notif)
+        except Exception as e:
+            print("Notification failed:", e)
 
 # Review Views
 class ReviewCreateView(generics.CreateAPIView):
@@ -80,7 +135,18 @@ class ReviewCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        review = serializer.save(user=self.request.user)
+
+        try:
+            event_title = review.event.title if review.event else "eveniment"
+            notif = Notification.objects.create(
+                user=self.request.user,
+                title="Review trimis",
+                message=f"Ai lăsat un review la: {event_title}",
+            )
+            emit_notification(notif)
+        except Exception as e:
+            print("Notification failed:", e)
 
 
 # Notification Views
@@ -89,7 +155,89 @@ class NotificationListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Notification.objects.filter(user=self.request.user)
+        return Notification.objects.filter(user=self.request.user).order_by("-created_at")
+
+    def _ensure_admin_pending_notification(self, request):
+        """
+        Creeaza/actualizeaza o notificare persistenta pentru admin/staff
+        daca exista evenimente cu status=pending.
+        Returneaza True daca a creat o notificare NOUA (ca sa putem trimite SSE optional).
+        """
+        user = request.user
+
+        # doar pentru admin/staff/superuser
+        if not (user.is_staff or user.is_superuser):
+            return False
+
+        # daca nu avem Event importat, nu facem nimic
+        if Event is None:
+            return False
+
+        # ajusteaza filtrul daca statusul tau are alt nume
+        pending_count = Event.objects.filter(status="pending").count()
+        if pending_count <= 0:
+            return False
+
+        title = "Evenimente în așteptare"
+        message = f"Ai {pending_count} eveniment(e) care așteaptă aprobare."
+
+        # Ca sa nu creeze spam, folosim get_or_create pe (user, title)
+        # Daca ai camp "kind" in Notification
+        notif, created = Notification.objects.get_or_create(
+            user=user,
+            title=title,
+            defaults={
+                "message": message,
+                "is_read": False,
+                "created_at": timezone.now(),
+            },
+        )
+
+        # actualizare mesaj (daca s-a schimbat) si optional re-deschidere daca vrei
+        changed = False
+        if notif.message != message:
+            notif.message = message
+            changed = True
+
+        # IMPORTANT:
+        # Daca vrei ca dupa ce o citeste sa ramana citita
+        # COMENTEAZA urmatoarele 3 linii.
+        #if notif.is_read:
+        #    notif.is_read = False
+        #    changed = True
+
+        if changed:
+            notif.save(update_fields=["message", "is_read"])
+
+        # optional: daca e noua, trimite SSE imediat
+        if created or changed:
+            try:
+                emit_notification(notif)
+            except Exception as e:
+                print("emit admin pending notif failed:", e)
+
+        return created
+
+    def list(self, request, *args, **kwargs):
+        # 1) asigura notificarea pentru admin daca exista pending events
+        self._ensure_admin_pending_notification(request)
+
+        # 2) apoi returneaza lista ca inainte
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page if page is not None else queryset, many=True)
+
+        unread_count = queryset.filter(is_read=False).count()
+
+        data = {
+            "items": serializer.data,
+            "unreadCount": unread_count,
+        }
+
+        if page is not None:
+            return self.get_paginated_response(data)
+
+        return Response(data)
 
 
 # Ticket Check-in View
@@ -183,3 +331,36 @@ class TicketCheckinView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+    
+class NotificationReadView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request, pk):
+        notif = Notification.objects.filter(id=pk, user=request.user).first()
+        if not notif:
+            return Response({"detail": "Not found"}, status=404)
+        notif.is_read = True
+        notif.save(update_fields=["is_read"])
+        return Response({"ok": True})
+
+
+class NotificationReadAllView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request):
+        Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+        return Response({"ok": True})
+    
+    
+def emit_notification(notification: Notification):
+    """Trimite notificarea prin SSE către userul destinatar."""
+    push_to_user(notification.user_id, {
+        "kind": "notification:new",
+        "notification": {
+            "id": notification.id,
+            "title": notification.title,
+            "message": notification.message,
+            "is_read": notification.is_read,
+            "created_at": notification.created_at.isoformat(),
+        }
+    })

@@ -7,6 +7,7 @@ from .views import (
   CategoryListView,
   MyEventsListView,
   EventStatsView,
+  PendingEventsCountView,
 )
 
 
@@ -20,4 +21,7 @@ urlpatterns = [
     path("faculties/", FacultyListView.as_view(), name='faculty-list'),
     path("departments/", DepartmentListView.as_view(), name='department-list'),
     path("categories/", CategoryListView.as_view(), name='category-list'),
+
+    #Endpoint for pending events
+    path("pending-count/", PendingEventsCountView.as_view(), name="pending-events-count"),
 ]

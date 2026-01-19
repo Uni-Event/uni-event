@@ -6,7 +6,11 @@ from .views import (
     NotificationListView,
     TicketDeleteView,
     TicketCheckinView,
+    NotificationReadView,
+    NotificationReadAllView,
 )
+
+from .streamviews import notifications_stream
 
 
 urlpatterns = [
@@ -25,4 +29,9 @@ urlpatterns = [
 
     # notifications
     path("notifications/", NotificationListView.as_view()),
+    path("notifications/<int:pk>/read/", NotificationReadView.as_view()),
+    path("notifications/read-all/", NotificationReadAllView.as_view()),
+
+    # notifications (SSE STREAM)
+    path("notifications/stream/", notifications_stream),
 ]
