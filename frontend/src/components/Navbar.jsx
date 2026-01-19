@@ -52,6 +52,22 @@ function Navbar() {
     return () => document.removeEventListener("mousedown", onDown);
   }, [notifDesktopOpen]);
 
+  useEffect(() => {
+    const shouldLock = isMobileMenuOpen || notifMobileOpen;
+    if (!shouldLock) return;
+
+    const prevOverflow = document.body.style.overflow;
+    const prevTouch = document.body.style.touchAction;
+
+    document.body.style.overflow = "hidden";
+    document.body.style.touchAction = "none"; 
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.body.style.touchAction = prevTouch;
+    };
+  }, [isMobileMenuOpen, notifMobileOpen]);
+
   // Decode user din token (safe)
   const user = useMemo(() => {
     const fallback = { name: "Utilizator", email: "", isOrganizer: false };
@@ -81,7 +97,7 @@ function Navbar() {
   };
 
   const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-    user.name
+    user.name,
   )}&background=8a56d1&color=fff&size=128&bold=true`;
 
   // Link-uri comune
@@ -91,9 +107,17 @@ function Navbar() {
   const roleMenuItems = useMemo(() => {
     if (isOrganizer) {
       return [
-        { to: "/organizer/dashboard", label: "Gestiune", icon: <FaClipboardList /> },
+        {
+          to: "/organizer/dashboard",
+          label: "Gestiune",
+          icon: <FaClipboardList />,
+        },
         { to: "/organizer/stats", label: "Statistici", icon: <FaChartBar /> },
-        { to: "/organizer/scan", label: "Scanare Bilete", icon: <BsQrCodeScan /> },
+        {
+          to: "/organizer/scan",
+          label: "Scanare Bilete",
+          icon: <BsQrCodeScan />,
+        },
       ];
     }
 
@@ -115,20 +139,24 @@ function Navbar() {
 
   const markOneRead = async (id) => {
     try {
-      await api.patch(`${API_BASE_URL}/api/interactions/notifications/${id}/read/`);
+      await api.patch(
+        `${API_BASE_URL}/api/interactions/notifications/${id}/read/`,
+      );
     } catch (e) {
       console.error(e);
     }
 
     setItems((prev) =>
-      (prev || []).map((n) => (n.id === id ? { ...n, is_read: true } : n))
+      (prev || []).map((n) => (n.id === id ? { ...n, is_read: true } : n)),
     );
     setUnreadCount((c) => Math.max(0, c - 1));
   };
 
   const markAllRead = async () => {
     try {
-      await api.patch(`${API_BASE_URL}/api/interactions/notifications/read-all/`);
+      await api.patch(
+        `${API_BASE_URL}/api/interactions/notifications/read-all/`,
+      );
     } catch (e) {
       console.error(e);
     }
@@ -139,15 +167,17 @@ function Navbar() {
 
   const fetchNotifications = async () => {
     try {
-      const { data } = await api.get(`${API_BASE_URL}/api/interactions/notifications/`);
+      const { data } = await api.get(
+        `${API_BASE_URL}/api/interactions/notifications/`,
+      );
 
       const list = Array.isArray(data)
         ? data
         : Array.isArray(data?.items)
-        ? data.items
-        : Array.isArray(data?.results)
-        ? data.results
-        : [];
+          ? data.items
+          : Array.isArray(data?.results)
+            ? data.results
+            : [];
 
       setItems(list);
       setUnreadCount(list.filter((n) => !n.is_read).length);
@@ -215,7 +245,9 @@ function Navbar() {
 
                     <div className={styles.notifList}>
                       {notifItems.length === 0 ? (
-                        <div className={styles.notifEmpty}>Nu ai notificări.</div>
+                        <div className={styles.notifEmpty}>
+                          Nu ai notificări.
+                        </div>
                       ) : (
                         notifItems.slice(0, 8).map((n) => (
                           <button
@@ -232,7 +264,9 @@ function Navbar() {
                             <div className={styles.notifTitle}>{n.title}</div>
                             <div className={styles.notifMsg}>{n.message}</div>
                             <div className={styles.notifTime}>
-                              {n.created_at ? new Date(n.created_at).toLocaleString() : ""}
+                              {n.created_at
+                                ? new Date(n.created_at).toLocaleString()
+                                : ""}
                             </div>
                           </button>
                         ))
@@ -271,7 +305,11 @@ function Navbar() {
                 <div className={styles.divider} />
 
                 {roleMenuItems.map((item) => (
-                  <Link key={item.to} to={item.to} className={styles.dropdownItem}>
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    className={styles.dropdownItem}
+                  >
                     {item.icon} {item.label}
                   </Link>
                 ))}
@@ -308,7 +346,9 @@ function Navbar() {
       </nav>
 
       {/* MENIU MOBIL */}
-      <div className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.active : ""}`}>
+      <div
+        className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.active : ""}`}
+      >
         <div className={styles.mobileProfile}>
           <div
             className={styles.mobileAvatar}
@@ -361,7 +401,11 @@ function Navbar() {
           </Link>
         ))}
 
-        <Link to="/profile" className={styles.mobileLink} onClick={closeMobileMenu}>
+        <Link
+          to="/profile"
+          className={styles.mobileLink}
+          onClick={closeMobileMenu}
+        >
           <FaUser style={{ marginRight: "10px" }} />
           Profil
         </Link>

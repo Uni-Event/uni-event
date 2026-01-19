@@ -426,6 +426,8 @@
   flex-direction: column;
   z-index: 998;
   box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .mobileMenu.active {

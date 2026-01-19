@@ -595,7 +595,7 @@
     height: auto;
     margin: 0 auto; /* Centrare orizontală forțată */
     display: block;
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
   }
 
