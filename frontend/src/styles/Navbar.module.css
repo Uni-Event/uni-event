@@ -4,16 +4,15 @@
    NAVBAR (Fix Sus)
    ========================= */
 .navbar {
-  background: #ffffff;
-  border-bottom: 1px solid #f0f0f0;
-  width: 100%;
+  background-color: #ffffff;
   position: sticky;
   top: 0;
   z-index: 1000;
   height: 72px;
+  /* Eliminăm orice umbră sau border care ar putea tăia designul */
+  border: none;
+  box-shadow: none;
   font-family: "Inter", sans-serif;
-
-  box-shadow: 0 6px 18px rgba(17, 17, 17, 0.05);
 }
 
 .container {
@@ -45,7 +44,7 @@
 }
 
 .navbarLogo {
-  height: 56px;
+  height: 56px; /* FIX: incadrat corect in navbar */
   width: auto;
   max-width: 190px;
   object-fit: contain;
@@ -108,6 +107,7 @@
   border-radius: 8px;
   transition: all 0.2s ease;
 
+  /* IMPORTANT: ca sa fie identic pt Link + button */
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -123,6 +123,7 @@
   background: #f9f5ff;
 }
 
+/* focus accesibil */
 .navLink:focus-visible {
   outline: 2px solid rgba(138, 86, 209, 0.45);
   outline-offset: 2px;
@@ -135,7 +136,7 @@
   align-items: center;
 }
 
-/* Dot (desktop badge) */
+/* Dot (badge) */
 .notifDot {
   width: 8px;
   height: 8px;
@@ -144,7 +145,7 @@
 }
 
 /* =========================
-   NOTIFICATIONS DROPDOWN (Desktop)
+   NOTIFICATIONS DROPDOWN
    ========================= */
 .notifDropdown {
   position: absolute;
@@ -160,6 +161,7 @@
   z-index: 1100;
 }
 
+/* Header dropdown */
 .notifHeader {
   display: flex;
   align-items: center;
@@ -191,6 +193,7 @@
   cursor: not-allowed;
 }
 
+/* Lista */
 .notifList {
   max-height: 360px;
   overflow: auto;
@@ -202,6 +205,7 @@
   font-weight: 600;
 }
 
+/* Item notificare */
 .notifItem {
   width: 100%;
   text-align: left;
@@ -298,6 +302,7 @@
   color: #1a1a1a;
 }
 
+/* Dropdown profil */
 .dropdownMenu {
   position: absolute;
   top: calc(100% + 10px);
@@ -332,12 +337,14 @@
   border-top: 1px solid #eee;
 }
 
+/* Afisare dropdown la hover */
 .profileContainer:hover .dropdownMenu {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
 }
 
+/* Email (zona top) */
 .emailDisplay {
   padding: 10px 12px;
   font-size: 0.82rem;
@@ -352,6 +359,7 @@
   word-break: break-word;
 }
 
+/* Item dropdown */
 .dropdownItem {
   display: flex;
   align-items: center;
@@ -386,6 +394,7 @@
   color: #d32f2f !important;
 }
 
+/* Divider */
 .divider {
   height: 1px;
   background: #eee;
@@ -425,9 +434,6 @@
   display: flex;
   flex-direction: column;
   z-index: 998;
-  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .mobileMenu.active {
@@ -450,7 +456,6 @@
   background-size: cover;
   background-position: center;
   border: 2px solid #fff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .mobileUserInfo {
@@ -468,57 +473,21 @@
   color: #333;
 }
 
-/* IMPORTANT: asta e "bold ca Acasă" (font-weight 700) */
 .mobileLink {
   padding: 15px 25px;
   text-decoration: none;
   color: #333;
   font-weight: 700;
-  border-bottom: 1px solid #f5f5f5;
   display: flex;
   align-items: center;
   gap: 10px;
+  background: transparent;
+  border: none;
 }
 
 .mobileLink:hover {
   background: #faf7ff;
   color: #8a56d1;
-}
-
-/* Button in mobile menu -> arata IDENTIC cu Link */
-.mobileLinkBtn {
-  background: none;
-  border: none;
-  width: 100%;
-  text-align: left;
-  font: inherit; 
-  font-weight: 700;        /* pastreaza Inter + weight 700 */
-  color: inherit;
-  cursor: pointer;
-  padding: 15px 25px;    /* identic cu .mobileLink */
-  border-bottom: 1px solid #f5f5f5;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.mobileLinkBtn:hover {
-  background: #faf7ff;
-  color: #8a56d1;
-}
-
-.mobileLinkBtn:focus-visible {
-  outline: 2px solid rgba(138, 86, 209, 0.45);
-  outline-offset: -2px;
-}
-
-/* Dot mic (necitate) */
-.mobileDot {
-  margin-left: auto;
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: #e53935;
 }
 
 /* =========================
@@ -545,58 +514,201 @@
 }
 
 /* =========================
-   MOBILE NOTIFICATIONS (Bottom Drawer)
+   FADE NAVBAR
    ========================= */
+/* strat de tranziție între navbar și background */
+.navbar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 46px;
+  pointer-events: none;
+  z-index: 0;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(250, 248, 255, 0.55) 45%,
+    rgba(197, 180, 227, 0.78) 100%
+  );
+}
+
+/* conținutul navbarului peste efecte */
+.container {
+  position: relative;
+  z-index: 2;
+}
+
+/* Glow fin sub navbar (nu bandă) */
+.navbar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 1px;
+  pointer-events: none;
+  z-index: 0; /* peste fade */
+
+  background: linear-gradient(
+    to right,
+    rgba(138, 86, 209, 0),
+    rgba(138, 86, 209, 0.18),
+    rgba(138, 86, 209, 0)
+  );
+}
+
+/* Mobil: fade puțin mai mic */
+@media screen and (max-width: 768px) {
+  .navbar::after {
+    height: 36px;
+    bottom: 0;
+  }
+
+  .navbar::before {
+    bottom: 0;
+    height: 1px;
+  }
+}
+
+/* =========================
+   MOBILE NOTIFICATIONS BUTTON
+   ========================= */
+
+.mobileIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+}
+
+.mobileNotifText {
+  flex: 1;
+  text-align: left;
+}
+
+.mobileNotifBadge {
+  margin-left: auto;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #fff;
+  background: #e53935; /* rosu */
+}
+
+/* =========================
+   MOBILE NOTIFICATIONS MODAL
+   ========================= */
+
 .mobileNotifOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.38);
   z-index: 2000;
+
+  /* ✅ fundal + blur */
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
   display: flex;
-  justify-content: center;
   align-items: flex-end;
-  padding: 14px;
+  justify-content: center;
+
+  /* ✅ ca sa nu scrolleze overlay-ul */
+  overflow: hidden;
+  overscroll-behavior: contain;
 }
 
 .mobileNotifSheet {
   width: 100%;
   max-width: 520px;
+  height: min(78vh, 680px);
   background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.22);
+  border-radius: 18px 18px 0 0;
   overflow: hidden;
-  max-height: 80vh;
-  outline: none;
   display: flex;
   flex-direction: column;
 }
 
-/* Header din drawer - bold ca "Acasă" */
-.mobileNotifHeader {
+.mobileNotifTop {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 14px 16px;
-  border-bottom: 1px solid #f1f1f1;
-  font-family: "Inter", sans-serif;
-  font-weight: 700; /* <-- bold ca butonul Acasă */
+  border-bottom: 1px solid #eee;
+  background: #fff;
+}
+
+.mobileNotifTitle {
+  font-weight: 900;
   color: #111;
+  font-size: 1.05rem;
+}
+
+.mobileNotifTopActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobileNotifMarkAll {
+  border: none;
+  background: #f6f0ff;
+  color: #8a56d1;
+  font-weight: 800;
+  padding: 8px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.mobileNotifMarkAll:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mobileNotifClose {
+  border: none;
+  background: #f5f5f5;
+  color: #111;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .mobileNotifList {
-  max-height: calc(80vh - 56px);
+  flex: 1;
   overflow: auto;
 }
 
-/* item in drawer */
+.mobileNotifEmpty {
+  padding: 16px;
+  color: #777;
+  font-weight: 700;
+}
+
 .mobileNotifItem {
   width: 100%;
   text-align: left;
-  background: transparent;
   border: none;
+  background: #fff;
   cursor: pointer;
-  padding: 12px 14px;
-  transition: background 0.2s ease;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f3f3f3;
+
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -611,20 +723,93 @@
   background: #f7f2ff;
 }
 
-.mobileNotifTitle {
-  font-weight: 800;
-  color: #1a1a1a;
-  font-size: 0.92rem;
+.mobileNotifItemTitle {
+  font-weight: 900;
+  color: #111;
+  font-size: 0.95rem;
 }
 
-.mobileNotifMsg {
+.mobileNotifItemMsg {
   color: #555;
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   line-height: 1.25;
 }
 
-.mobileNotifTime {
+.mobileNotifItemTime {
   color: #999;
   font-size: 0.78rem;
   margin-top: 2px;
+}
+
+/* =========================
+   MOBILE NOTIF – OPEN / CLOSE ANIMATION
+   ========================= */
+
+@keyframes mobileNotifOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mobileNotifOverlayFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes mobileNotifSheetSlideUp {
+  from {
+    transform: translateY(22px);
+    opacity: 0.98;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes mobileNotifSheetSlideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(26px);
+    opacity: 0;
+  }
+}
+
+/* OPEN */
+.mobileNotifOverlay {
+  animation: mobileNotifOverlayFadeIn 180ms ease-out forwards;
+}
+
+.mobileNotifSheet {
+  animation: mobileNotifSheetSlideUp 240ms cubic-bezier(0.2, 0.8, 0.2, 1)
+    forwards;
+  will-change: transform, opacity;
+}
+
+/* CLOSE */
+.mobileNotifOverlay.closing {
+  animation: mobileNotifOverlayFadeOut 160ms ease-in forwards;
+}
+
+.mobileNotifOverlay.closing .mobileNotifSheet {
+  animation: mobileNotifSheetSlideDown 200ms cubic-bezier(0.4, 0, 0.6, 1)
+    forwards;
+}
+
+/* reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .mobileNotifOverlay,
+  .mobileNotifSheet {
+    animation: none !important;
+  }
 }
