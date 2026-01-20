@@ -434,7 +434,6 @@
   display: flex;
   flex-direction: column;
   z-index: 998;
-  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
 }
 
 .mobileMenu.active {
@@ -457,7 +456,6 @@
   background-size: cover;
   background-position: center;
   border: 2px solid #fff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .mobileUserInfo {
@@ -480,10 +478,11 @@
   text-decoration: none;
   color: #333;
   font-weight: 700;
-  border-bottom: 1px solid #f5f5f5;
   display: flex;
   align-items: center;
   gap: 10px;
+  background: transparent;
+  border: none;
 }
 
 .mobileLink:hover {
@@ -587,13 +586,6 @@
   width: 22px;
 }
 
-.mobileNotifBtn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-}
-
 .mobileNotifText {
   flex: 1;
   text-align: left;
@@ -622,13 +614,19 @@
   position: fixed;
   inset: 0;
   z-index: 2000;
+
+  /* ✅ fundal + blur */
   background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 
   display: flex;
   align-items: flex-end;
   justify-content: center;
+
+  /* ✅ ca sa nu scrolleze overlay-ul */
+  overflow: hidden;
+  overscroll-behavior: contain;
 }
 
 .mobileNotifSheet {
@@ -637,7 +635,6 @@
   height: min(78vh, 680px);
   background: #fff;
   border-radius: 18px 18px 0 0;
-  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.22);
   overflow: hidden;
   display: flex;
   flex-direction: column;

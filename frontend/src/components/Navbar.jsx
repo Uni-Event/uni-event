@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   FaBars,
   FaTimes,
@@ -33,11 +33,79 @@ function Navbar() {
   const [mobileNotifClosing, setMobileNotifClosing] = useState(false);
 
   const navigate = useNavigate();
-  const token = localStorage.getItem(ACCESS_TOKEN);
+  const location = useLocation();
 
+  const token = localStorage.getItem(ACCESS_TOKEN);
   const { unreadCount, setUnreadCount, items, setItems } = useNotifications();
 
-  // ✅ close desktop notif dropdown on outside click
+  // ✅ ref unic (inainte aveai DUPLICAT)
+  const scrollLockRef = useRef({
+    locked: false,
+    scrollY: 0,
+    prevPosition: "",
+    prevTop: "",
+    prevLeft: "",
+    prevRight: "",
+    prevWidth: "",
+  });
+
+  const lockBodyScroll = () => {
+    if (scrollLockRef.current.locked) return;
+
+    scrollLockRef.current.locked = true;
+    scrollLockRef.current.scrollY = window.scrollY || 0;
+
+    scrollLockRef.current.prevPosition = document.body.style.position;
+    scrollLockRef.current.prevTop = document.body.style.top;
+    scrollLockRef.current.prevLeft = document.body.style.left;
+    scrollLockRef.current.prevRight = document.body.style.right;
+    scrollLockRef.current.prevWidth = document.body.style.width;
+
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollLockRef.current.scrollY}px`;
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
+  };
+
+  const unlockBodyScroll = () => {
+    if (!scrollLockRef.current.locked) return;
+
+    document.body.style.position = scrollLockRef.current.prevPosition;
+    document.body.style.top = scrollLockRef.current.prevTop;
+    document.body.style.left = scrollLockRef.current.prevLeft;
+    document.body.style.right = scrollLockRef.current.prevRight;
+    document.body.style.width = scrollLockRef.current.prevWidth;
+
+    const y = scrollLockRef.current.scrollY;
+
+    scrollLockRef.current.locked = false;
+    scrollLockRef.current.scrollY = 0;
+
+    window.scrollTo(0, y);
+  };
+
+  // ✅ lock/unlock in functie de stari (fara setState aici)
+  useEffect(() => {
+    const shouldLock =
+      isMobileMenuOpen || mobileNotifOpen || mobileNotifClosing;
+
+    if (shouldLock) lockBodyScroll();
+    else unlockBodyScroll();
+
+    return () => {
+      unlockBodyScroll();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMobileMenuOpen, mobileNotifOpen, mobileNotifClosing]);
+
+  // ✅ la navigare: doar UNLOCK (fara setState)
+  useEffect(() => {
+    unlockBodyScroll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
+
+  // close desktop notif dropdown on outside click
   useEffect(() => {
     const onDown = (e) => {
       if (!notifRef.current) return;
@@ -111,9 +179,9 @@ function Navbar() {
 
   const notifItems = useMemo(() => {
     if (Array.isArray(items)) return items;
-    if (items && Array.isArray(items.items)) return items.items; // backend {items:[...]}
-    if (items && Array.isArray(items.results)) return items.results; // DRF pagination
-    if (items && Array.isArray(items.notifications)) return items.notifications; // alt backend
+    if (items && Array.isArray(items.items)) return items.items;
+    if (items && Array.isArray(items.results)) return items.results;
+    if (items && Array.isArray(items.notifications)) return items.notifications;
     return [];
   }, [items]);
 
@@ -174,18 +242,19 @@ function Navbar() {
   };
 
   const openMobileNotifications = async () => {
-    // daca era in tranzitie de inchidere, anulam
+    // ✅ inchide meniul mobil inainte (altfel ramai in lock)
+    setIsMobileMenuOpen(false);
+
     setMobileNotifClosing(false);
     await fetchNotifications();
     setMobileNotifOpen(true);
   };
 
-  // ✅ close cu animatie
+  // close cu animatie
   const closeMobileNotifications = () => {
     if (!mobileNotifOpen) return;
     setMobileNotifClosing(true);
 
-    // trebuie sa corespunda cu durata din CSS (ex: 200ms)
     window.setTimeout(() => {
       setMobileNotifClosing(false);
       setMobileNotifOpen(false);
@@ -376,35 +445,30 @@ function Navbar() {
           </Link>
         ))}
 
-        {roleMenuItems.map((item) => (
-          <React.Fragment key={item.to}>
-            <Link
-              to={item.to}
-              className={styles.mobileLink}
-              onClick={closeMobileMenu}
-            >
-              <span className={styles.mobileIcon}>{item.icon}</span>
-              {item.label}
-            </Link>
-
-            {/* Notificări imediat după Favorite (doar user normal) */}
-            {!isOrganizer && item.to === "/favorites" && (
-              <button
-                type="button"
-                className={`${styles.mobileLink} ${styles.mobileNotifBtn}`}
-                onClick={openMobileNotifications}
-              >
-                <span className={styles.mobileIcon}>
-                  <FaBell />
-                </span>
-                <span className={styles.mobileNotifText}>Notificări</span>
-
-                {unreadCount > 0 && (
-                  <span className={styles.mobileNotifBadge}>{unreadCount}</span>
-                )}
-              </button>
+        {/* Notificări (mobil) - sub Acasă, fără icon, stil ca Acasă */}
+        {!isOrganizer && (
+          <button
+            type="button"
+            className={styles.mobileLink}
+            onClick={openMobileNotifications}
+          >
+            <span>Notificări</span>
+            {unreadCount > 0 && (
+              <span className={styles.mobileNotifBadge}>{unreadCount}</span>
             )}
-          </React.Fragment>
+          </button>
+        )}
+
+        {roleMenuItems.map((item) => (
+          <Link
+            key={item.to}
+            to={item.to}
+            className={styles.mobileLink}
+            onClick={closeMobileMenu}
+          >
+            <span className={styles.mobileIcon}>{item.icon}</span>
+            {item.label}
+          </Link>
         ))}
 
         <Link
@@ -426,7 +490,7 @@ function Navbar() {
         </div>
       </div>
 
-      {/* ✅ Mobile notifications modal (componenta) + close animat */}
+      {/* Mobile notifications modal (componenta) + close animat */}
       <MobileNotifications
         open={mobileNotifOpen}
         closing={mobileNotifClosing}
@@ -434,7 +498,6 @@ function Navbar() {
         items={notifItems}
         unreadCount={unreadCount}
         onMarkOneRead={(id) => {
-          // la click pe notif: marcheaza + inchide frumos + inchide meniul
           if (!id) return;
           markOneRead(id);
           closeMobileNotifications();

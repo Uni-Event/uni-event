@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import styles from "../../styles/CreateEvent.module.css";
 
 // --- Servicii ---
@@ -117,7 +118,9 @@ const CreateEventModal = ({ isOpen, onClose, initialEvent = null }) => {
         category: initialEvent.category?.id
           ? String(initialEvent.category.id)
           : "",
-        faculty: initialEvent.faculty?.id ? String(initialEvent.faculty.id) : "",
+        faculty: initialEvent.faculty?.id
+          ? String(initialEvent.faculty.id)
+          : "",
         department: initialEvent.department?.id
           ? String(initialEvent.department.id)
           : "",
@@ -135,9 +138,8 @@ const CreateEventModal = ({ isOpen, onClose, initialEvent = null }) => {
 
     setMarkerPosition({ lat: defaultLat, lng: defaultLng });
     setErrors({});
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, initialEvent, defaultLat, defaultLng, INITIAL_DATA]);
+  }, [isOpen, initialEvent]);
 
   // Scroll la primul error
   useEffect(() => {
@@ -184,6 +186,16 @@ const CreateEventModal = ({ isOpen, onClose, initialEvent = null }) => {
     if (isOpen) fetchData();
   }, [isOpen]);
 
+  // ✅ lock scroll cât timp modalul e deschis
+  useEffect(() => {
+    if (!isOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isOpen]);
+
   // Filtrăm departamentele în funcție de facultatea selectată
   const filteredDepartments = departmentsList.filter((dept) => {
     return dept.faculty && dept.faculty.id === parseInt(formData.faculty);
@@ -217,7 +229,6 @@ const CreateEventModal = ({ isOpen, onClose, initialEvent = null }) => {
     setFormData((prev) => {
       const newData = { ...prev, [name]: value };
 
-      // Dacă utilizatorul schimbă facultatea, resetăm departamentul selectat anterior
       if (name === "faculty") {
         newData.department = "";
       }
@@ -307,10 +318,8 @@ const CreateEventModal = ({ isOpen, onClose, initialEvent = null }) => {
       return;
     }
 
-    // 1. Construim FormData
     const data = new FormData();
 
-    // Câmpuri text directe
     data.append("title", formData.title);
     data.append("description", formData.description);
     data.append("max_participants", formData.seats);
@@ -318,25 +327,20 @@ const CreateEventModal = ({ isOpen, onClose, initialEvent = null }) => {
     data.append("end_date", formData.endDate);
     data.append("status", statusType);
 
-    // Locație
     data.append("location_name", formData.locationName);
     data.append("location_address", formData.locationAddress);
-    if (formData.googleMapsLink) {
+    if (formData.googleMapsLink)
       data.append("google_maps_link", formData.googleMapsLink);
-    }
 
-    // Chei Străine
     if (formData.faculty) data.append("faculty", formData.faculty);
     if (formData.department) data.append("department", formData.department);
     if (formData.category) data.append("category", formData.category);
 
-    // Fișiere
     if (formData.coverImage) data.append("image", formData.coverImage);
     if (formData.document) data.append("file", formData.document);
 
     try {
       const token = localStorage.getItem("access_token");
-
       if (!token) {
         alert("Nu ești autentificat!");
         return;
@@ -358,7 +362,7 @@ const CreateEventModal = ({ isOpen, onClose, initialEvent = null }) => {
         );
       }
 
-      onClose();
+      onClose?.();
     } catch (error) {
       console.error("Eroare:", error);
 
@@ -373,7 +377,6 @@ const CreateEventModal = ({ isOpen, onClose, initialEvent = null }) => {
         });
 
         setErrors(normalized);
-
         alert("Nu s-a putut salva evenimentul. Verifică câmpurile marcate.");
         return;
       }
@@ -392,14 +395,21 @@ const CreateEventModal = ({ isOpen, onClose, initialEvent = null }) => {
     sendEventData("pending");
   };
 
-  // Render guards
   if (!isOpen) return null;
 
-  return (
-    <div className={styles.modalOverlay} onClick={onClose}>
-      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+  const modal = (
+    <div
+      className={styles.modalOverlay}
+      onMouseDown={onClose} // click pe overlay -> close
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className={styles.modalContent}
+        onMouseDown={(e) => e.stopPropagation()} // click în card -> nu close
+      >
         {/* Close */}
-        <button className={styles.closeButton} onClick={onClose}>
+        <button className={styles.closeButton} onClick={onClose} type="button">
           <FiX />
         </button>
 
@@ -551,7 +561,6 @@ const CreateEventModal = ({ isOpen, onClose, initialEvent = null }) => {
             </div>
 
             <div className={styles.row}>
-              {/* FACULTATE */}
               <div className={styles.col}>
                 <label className={styles.label}>
                   Facultate <span style={{ color: "red" }}>*</span>
@@ -572,7 +581,6 @@ const CreateEventModal = ({ isOpen, onClose, initialEvent = null }) => {
                 </select>
               </div>
 
-              {/* DEPARTAMENT */}
               <div className={styles.col}>
                 <label className={styles.label}>Departament</label>
                 <select
@@ -748,6 +756,9 @@ const CreateEventModal = ({ isOpen, onClose, initialEvent = null }) => {
       </div>
     </div>
   );
+
+  // PORTAL: modalul se mută în <body>, deci e mereu peste navbar/layout
+  return createPortal(modal, document.body);
 };
 
 export default CreateEventModal;

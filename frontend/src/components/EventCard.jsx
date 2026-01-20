@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import styles from "../styles/EventCard.module.css";
 import EventDetailsModal from "./EventDetailsModal";
 import {
@@ -23,6 +24,26 @@ const EventCard = ({
 }) => {
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
+  // blocheaza scroll cand afisul e deschis
+  useEffect(() => {
+    if (!isImageOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [isImageOpen]);
+
+  // inchide cu ESC
+  useEffect(() => {
+    if (!isImageOpen) return;
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setIsImageOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isImageOpen]);
 
   if (!event) return null;
 
@@ -100,11 +121,6 @@ const EventCard = ({
     setIsImageOpen(true);
   };
 
-  const handleCloseImage = (e) => {
-    e.stopPropagation();
-    setIsImageOpen(false);
-  };
-
   const handleOpenDetails = (e) => {
     e.stopPropagation();
     setIsImageOpen(false);
@@ -114,6 +130,36 @@ const EventCard = ({
   const handleCloseDetails = () => {
     setIsDetailsOpen(false);
   };
+
+  // ✅ modalNode exact ca in EventDetailsModal
+  const posterModalNode = isImageOpen && (
+    <div
+      className={styles.posterOverlay}
+      onMouseDown={(e) => {
+        // inchide doar cand dai click pe overlay (fundal)
+        if (e.target === e.currentTarget) setIsImageOpen(false);
+      }}
+      role="dialog"
+      aria-modal="true"
+    >
+      <button
+        className={styles.posterClose}
+        type="button"
+        onClick={() => setIsImageOpen(false)}
+        aria-label="Închide"
+      >
+        <FiX />
+      </button>
+
+      <img
+        src={finalImageUrl}
+        alt={event.title || "Afiș eveniment"}
+        className={styles.posterImage}
+        onMouseDown={(e) => e.stopPropagation()}
+        draggable="false"
+      />
+    </div>
+  );
 
   return (
     <>
@@ -216,24 +262,8 @@ const EventCard = ({
         </div>
       </div>
 
-      {isImageOpen && (
-        <div className={styles.modalOverlay} onClick={handleCloseImage}>
-          <button
-            className={styles.closeBtn}
-            onClick={handleCloseImage}
-            type="button"
-          >
-            <FiX />
-          </button>
-
-          <img
-            src={finalImageUrl}
-            alt="Full screen"
-            className={styles.modalImage}
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
-      )}
+      {/* randare portal in body, peste navbar + sidebar */}
+      {isImageOpen && createPortal(posterModalNode, document.body)}
 
       <EventDetailsModal
         event={{
@@ -253,9 +283,9 @@ const EventCard = ({
         showSignup={showSignup}
         isFavorite={isFavorite}
         onToggleFavorite={onToggleFavorite}
-        onTicketCreated={onTicketCreated} 
-        hasTicket={hasTicket} 
-        ticketsCount={event.tickets_count || 0} 
+        onTicketCreated={onTicketCreated}
+        hasTicket={hasTicket}
+        ticketsCount={event.tickets_count || 0}
       />
     </>
   );
