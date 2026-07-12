@@ -12,3 +12,5 @@ Pillow               # Procesare imagini
 qrcode               # Generare coduri QR
 django-filter        # Filtrare pentru DRF
 drf-yasg             # Documentatie Swagger/OpenAPI
+cloudinary           # Biblioteca pentru integrarea cu Cloudinary
+django-cloudinary-storage # Stocare media in Cloudinary

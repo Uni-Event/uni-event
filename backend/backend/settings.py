@@ -80,7 +80,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    "cloudinary_storage",
     'django.contrib.staticfiles',
+    "cloudinary",
     "users",                # 29.11.25 Custom user app
     "interactions",         # 29.11.25 Interactions app
     "rest_framework",       # 29.11.25 Added for Django REST Framework
@@ -191,3 +193,12 @@ AUTH_USER_MODEL = 'users.CustomUser'    # 29.11.25 Use custom user model
 # 15.12.25 Media files settings
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
