@@ -209,7 +209,7 @@ available in the [development process documentation](docs/DEVELOPMENT_PROCESS.md
 | --- | --- |
 | [Development Process](docs/DEVELOPMENT_PROCESS.md) | Requirements, technical decisions, deployment and project organization |
 | [Testing](docs/TESTING.md) | Manual testing, automated tests, security evaluation and test commands |
-| [Team and Contributions](docs/TEAM_CONTRIBUTIONS.md) | Team members, responsibilities and individual contributions |
+| [Team and Contributions](docs/TEAM_CONTRIBUTIONS.md) | Team members, primary roles, and areas of coordination |
 
 ## Team Project
 
