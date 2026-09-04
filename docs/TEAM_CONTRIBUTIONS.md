@@ -5,18 +5,20 @@
 UniEvent was developed by a five-person team organized across architecture,
 development, quality assurance, product design, and project management.
 
-Responsibilities occasionally overlapped during implementation, integration,
-and testing.
+Implementation was shared across the team through assigned Jira tasks, code
+reviews, integration work, and testing. The roles below indicate each member's
+primary area of responsibility, while the application as a whole was developed
+collaboratively.
 
 ## Roles and Responsibilities
 
-| Team member | Primary role | Responsibilities |
+| Team member | Primary role | Area of coordination |
 | --- | --- | --- |
-| Gabriel Ciobanu | Architecture and Backend Development | System architecture, Django REST API, data models, frontend integration, Render deployment, Neon database integration, and manual API testing with Postman |
-| Ionuț Alexandriuc | Frontend Development | React and Vite implementation, reusable components, responsive interfaces, and API integration |
-| Diana Ionela Ungureanu | Data and Quality Assurance | Database design support, automated API testing, end-to-end testing with Playwright, and test reporting |
-| Iuliana-Sabina Trufin | UI/UX Design | Figma prototypes, user flows, visual identity, and interface consistency |
-| Valentin Cosmin Airinei | Project Management and Documentation | Jira planning, task coordination, progress tracking, and Confluence documentation |
+| Valentin Cosmin Airinei | Project Management | Jira planning, Confluence documentation and team coordination |
+| Ionuț Alexandriuc | Frontend Development | React interface, reusable components and responsive behavior |
+| Gabriel Ciobanu | Architecture and Backend | Backend architecture, REST API, data model, integration and deployment |
+| Iuliana-Sabina Trufin | UI/UX Design | Figma prototypes, user flows and visual consistency |
+| Diana Ionela Ungureanu | Database and Quality Assurance | Data persistence, automated testing and test validation |
 
 ## Collaboration and Tooling
 
